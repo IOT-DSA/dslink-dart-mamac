@@ -1,4 +1,7 @@
 name: dslink_mamac
 description: Mamac Systems DSLink
+environment:
+  sdk: ">=1.11.0 <2.0.0"
 dependencies:
   dslink: ^0.5.6
+  xml: ^2.4.1
