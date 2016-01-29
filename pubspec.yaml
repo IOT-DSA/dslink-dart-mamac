@@ -1,0 +1,4 @@
+name: dslink_mamac
+description: Mamac Systems DSLink
+dependencies:
+  dslink: ^0.5.6

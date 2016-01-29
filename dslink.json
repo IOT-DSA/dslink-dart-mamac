@@ -1,0 +1,24 @@
+{
+  "name" : "dslink-dart-mamac",
+  "version" : "1.0.0",
+  "description" : "Mamac Systems DSLink",
+  "main" : "bin/run.dart",
+  "engines" : {
+    "dart" : ">1.11.0"
+  },
+  "getDependencies" : [
+    "pub get"
+  ],
+  "configs" : {
+    "broker" : {
+      "type" : "url"
+    },
+    "name" : {
+      "type" : "string",
+      "default" : "Mamac"
+    },
+    "token" : {
+      "type" : "string"
+    }
+  }
+}
