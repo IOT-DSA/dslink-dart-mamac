@@ -26,13 +26,13 @@ class AddDevice extends SimpleNode {
         'placeholder' : 'http://device.address.com'
       },
       {
-        'name' : 'refreshInterval',
-        'type' : 'number',
-        'default' : 30
+      'name' : 'type',
+      'type' : 'enum[cf101,cf201,fz101,lt201,mt101,mt150,mt201,mt205,pc10144,pc10180,sm101]'
       },
       {
-        'name' : 'type',
-        'type' : 'enum[cf101,cf201,fz101,lt201,mt101,mt150,mt201,mt205,pc10144,pc10180,sm101]'
+        'name' : 'refreshRate',
+        'type' : 'number',
+        'default' : 30
       }
     ],
     r'$columns' : [
