@@ -10,7 +10,9 @@ Future main(List<String> args) async {
   LinkProvider link;
 
   link = new LinkProvider(args, 'Mamac-', command: 'run', profiles: {
-    AddDevice.isType : (String path) => new AddDevice(path)
+    AddDevice.isType : (String path) => new AddDevice(path, link),
+    MamacDeviceNode.isType : (String path) => new MamacDeviceNode(path),
+    RemoveDevice.isType : (String path) => new RemoveDevice(path, link)
   }, autoInitialize: false);
 
   link.init();

@@ -3,6 +3,8 @@ library dslink.mamac.nodes.device;
 import 'package:dslink/dslink.dart';
 
 import 'devices/devices.dart';
+import 'mamac_device_commands.dart';
+export 'mamac_device_commands.dart';
 
 class MamacDeviceNode extends SimpleNode {
   static const String isType = 'mamacDeviceNode';
@@ -10,7 +12,8 @@ class MamacDeviceNode extends SimpleNode {
     r'$is' : isType,
     r'$$mm_ref' : params['refreshRate'],
     r'$$mm_url' : params['address'],
-    r'$$mm_type': params['type']
+    r'$$mm_type': params['type'],
+    RemoveDevice.pathName : RemoveDevice.definition()
   };
 
   MamacDevice _device;
