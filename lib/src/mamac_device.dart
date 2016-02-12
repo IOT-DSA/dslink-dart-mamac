@@ -4,8 +4,9 @@ import 'dart:async';
 
 import 'package:dslink/dslink.dart';
 
-import 'devices/devices.dart';
+import 'devices.dart';
 import 'mamac_device_commands.dart';
+
 export 'mamac_device_commands.dart';
 
 class MamacDeviceNode extends SimpleNode {
