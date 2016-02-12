@@ -3,6 +3,9 @@ library dslink.mamac.nodes.add_device;
 import 'dart:async';
 
 import 'package:dslink/dslink.dart';
+import 'package:dslink/nodes.dart';
+
+import 'mamac_device.dart';
 
 class AddDevice extends SimpleNode {
   static const String isType = 'addDeviceNode';
@@ -46,10 +49,29 @@ class AddDevice extends SimpleNode {
     ]
   };
 
-  AddDevice(String path) : super(path);
+  final LinkProvider _link;
+
+  AddDevice(String path, this._link) : super(path);
 
   @override
   Map<String, dynamic> onInvoke(Map<String, dynamic> params) {
     var ret = { 'success' : false, 'message' : '' };
+    if (params['name'] == null || params['name'].trim().isEmpty) {
+      ret['message'] = 'Device name is required';
+      return ret;
+    }
+    if (params['address'] == null || params['address'].trim().isEmpty) {
+      ret['message'] = 'Device address is required';
+      return ret;
+    }
+
+    var name = NodeNamer.createName(params['name']);
+
+    provider.addNode('/$name', MamacDeviceNode.definition(params));
+    _link.save();
+
+    ret['success'] = true;
+    ret['message'] = 'Success';
+    return ret;
   }
 }
