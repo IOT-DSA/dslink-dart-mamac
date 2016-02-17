@@ -19,9 +19,8 @@ class MamacDeviceNode extends SimpleNode {
     RemoveDevice.pathName : RemoveDevice.definition()
   };
 
-  MamacDevice _device;
+  MamacDevice device;
   StreamSubscription _sub;
-
 
   MamacDeviceNode(String path) : super(path);
 
@@ -33,8 +32,8 @@ class MamacDeviceNode extends SimpleNode {
 
     print('Type: $devType, Address: $addr, Refresh: $refresh');
 
-    _device = new MamacDevice.fromType(devType, addr, refresh);
-    _sub = _device.onUpdate.listen(updateDevice);
+    device = new MamacDevice.fromType(devType, addr, refresh);
+    _sub = device.onUpdate.listen(updateDevice);
 
   }
 
@@ -44,32 +43,37 @@ class MamacDeviceNode extends SimpleNode {
 
     var curType = getConfig(r'$$mm_type');
     if (curType != params['type']) {
-      _device = new MamacDevice.fromType(params['type'], params['address'],
+      device = new MamacDevice.fromType(params['type'], params['address'],
           params['refreshRate']);
       // TODO: Need to remove subnodes because they may not match the new type.
     }
   }
 
   void updateDevice(Map<String, dynamic> data) {
-    // TODO: Update nodes
+    void valueUpdate(Map<String, dynamic> map, String pth) {
+      for (String key in map.keys) {
+        print('Key: $key, Data: ${map[key]}');
 
-    var node = {};
-
-    for (String key in data.keys) {
-      print('Key: $key, Data: ${data[key]}');
-
-      var nd = provider.getNode('$path/$key');
-      if (data[key] is String) {
-        if(nd == null) {
-          provider.addNode('$path/$key', DeviceValue.definition(data[key]));
-        } else {
-          nd.updateValue(data[key]);
+        var nd = provider.getNode('$pth/$key');
+        if (map[key] is String) {
+          if (nd == null) {
+            provider.addNode('$pth/$key', device.definition(key, map[key]));
+          } else {
+            nd.updateValue(map[key]);
+          }
+        } else if (map[key] is Map) {
+          if (nd == null) {
+            var newNd = provider.getOrCreateNode('$pth/$key');
+            valueUpdate(map[key], newNd.path);
+          } else {
+            valueUpdate(map[key], nd.path);
+          }
         }
-      } else {
-        continue;
-      }
 
+      }
     }
+
+    valueUpdate(data, path);
   }
 }
 
@@ -82,5 +86,27 @@ class DeviceValue extends SimpleNode {
     r'?value': value
   };
 
+  MamacDevice _device;
+
   DeviceValue(String path) : super(path);
+
+  @override
+  void onCreated() {
+    var p = parent;
+    while (p is! MamacDeviceNode) {
+      p = p.parent;
+      if (p == null) break;
+    }
+
+    if (p != null) {
+      _device = (p as MamacDeviceNode).device;
+    }
+  }
+
+  @override
+  bool onSetValue(dynamic newValue) {
+    var res = _device?.setValue(this, newValue);
+
+    return res ?? true;
+  }
 }

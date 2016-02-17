@@ -4,7 +4,10 @@ import 'dart:async';
 
 import 'package:xml/xml.dart' as xml;
 
-import '../mamac_client.dart';
+import 'mamac_client.dart';
+import 'devices/mt201.dart';
+
+import 'mamac_device.dart';
 
 abstract class MamacDevice {
   final String address;
@@ -22,8 +25,6 @@ abstract class MamacDevice {
   Timer _refreshTimer;
 
   xml.XmlDocument xmlDoc;
-
-  // TODO: Use stream controller to push updates to 'node'.
 
   MamacDevice(this.address, this.refreshRate) : client = new MamacClient() {
     rootUri = Uri.parse(address);
@@ -93,14 +94,26 @@ abstract class MamacDevice {
 
     return ret;
   }
+
+  Map<String, dynamic> definition(String nodeName, value);
+  bool setValue(node, value);
 }
 
-class MT201 extends MamacDevice {
-  static const String type = 'mt201';
-  static const String xmlFile = 'mt201ext.xml';
-
-  String get deviceType => type;
-  String get fileName => xmlFile;
-
-  MT201(String address, int refreshRate) : super(address, refreshRate);
+abstract class EnumHelper {
+  static const List<String> scheduleHeatCool = const ['MorningHeat',
+  'MorningCool', 'DaytimeHeat', 'DaytimeCool', 'EveningHeat', 'EveningCool',
+  'OvernightHeat', 'OvernightCool'];
+  static const List<String> scheduleFan = const ['MorningFan', 'DaytimeFan',
+  'EveningFan', 'OvernightFan'];
+  static const List<String> AutoOn = const ['Auto', 'On'];
+  static String get enumAutoOn => 'enum[${AutoOn.join(',')}]';
+  static const List<String> OffOn = const ['Off', 'On'];
+  static String get enumOffOn => 'enum[${OffOn.join(',')}]';
+  static const List<String> AutoManual = const ['Auto', 'Manual'];
+  static String get enumAutoManual => 'enum[${AutoManual.join(',')}]';
+  static const List<String> DisabledEnabled = const ['Disabled', 'Enabled'];
+  static String get enumDisabledEnabled => 'enum[${DisabledEnabled.join(',')}]';
+  static const List<String> UnoccupiedOccupied = const ['Unoccupied', 'Occupied'];
+  static String get enumUnoccupiedOccupied =>
+      'enum[${UnoccupiedOccupied.join(',')}]';
 }
