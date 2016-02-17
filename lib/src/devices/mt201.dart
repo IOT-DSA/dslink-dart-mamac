@@ -19,20 +19,27 @@ class MT201 extends MamacDevice {
 
     if (nodeName.startsWith('RoomTemp')) {
       ret[r'$writable'] = 'never';
-      print(' ********** Hit: $nodeName');
     } else if ((ind = EnumHelper.scheduleHeatCool.indexOf(nodeName)) != -1) {
       ret['@cmdid'] = '${_idPrefix}4X_0$ind';
       ret[r'$type'] = 'number';
-    } else if ((ind = EnumHelper.scheduleFan.indexOf(nodeName) != -1)) {
+    } else if ((ind = EnumHelper.scheduleFan.indexOf(nodeName)) != -1) {
       ret['@cmdid'] = '${_idPrefix}3X_0$ind';
       ret[r'$type'] = EnumHelper.enumAutoOn;
       ret[r'?value'] = EnumHelper.AutoOn[int.parse(value)];
+    } else if ((ind = EnumHelper.scheduleStartEnd.indexOf(nodeName)) != -1) {
+      ret['@cmdid'] = '${_idPrefix}2X_YY';
     } else {
       switch (nodeName) {
         case 'NodeID':
           ret['@cmdid'] = '${_idPrefix}00_00';
           break;
-      // TODO: Date/Times
+        case 'CurrentTime':
+          ret['@cmdid'] = '${_idPrefix}00_YY';
+          break;
+        case 'CurrentDate':
+          ret['@cmdid'] = '${_idPrefix}00_YY';
+          ret[r'$editor'] = 'date';
+          break;
         case 'SystemMode':
           ret['@cmdid'] = '${_idPrefix}70_02';
           ret[r'$type'] = 'enum[Heat,Cool,Auto]';
@@ -120,7 +127,56 @@ class MT201 extends MamacDevice {
     return ret;
   }
 
-  bool setValue(DeviceValue node, value) {
+  Map<String, dynamic> setValue(DeviceValue node, value) {
+    var ret = { 'cmd' : null, 'value' : null };
+    String cmd = node.getAttribute('@cmdid');
+    if (cmd == null) return null;
+    var nodeName = node.name;
 
+    if (EnumHelper.scheduleHeatCool.contains(nodeName)) {
+      var parentNames = node.parent.name.split('_');
+      if (parentNames.length > 1) {
+        var dayInd = EnumHelper.scheduleDays.indexOf(parentNames[1]);
+        ret['cmd'] = cmd.replaceFirst('X', '$dayInd');
+        ret['value'] = value;
+      }
+    } else if (EnumHelper.scheduleFan.contains(nodeName)) {
+      var parentNames = node.parent.name.split('_');
+      if (parentNames.length > 1) {
+        var dayInd = EnumHelper.scheduleDays.indexOf(parentNames[1]);
+        ret['cmd'] = cmd.replaceFirst('X', '$dayInd');
+        ret['value'] = EnumHelper.AutoOn.indexOf(value);
+      }
+    } else if (EnumHelper.scheduleStartEnd.contains(nodeName)) {
+      var parentNames = node.parent.name.split('_');
+      if (parentNames.length <= 1) return null;
+      var dayInd = EnumHelper.scheduleDays.indexOf(parentNames[1]);
+      var baseCmd = cmd.replaceFirst('X', '$dayInd');
+      var hourMin = value.split(':');
+      if (hourMin.length <= 1) return null;
+      ret['cmd'] = [];
+      ret['value'] = hourMin;
+      switch (nodeName) {
+        case 'MorningStart':
+          ret['cmd'].add(baseCmd.replaceFirst('YY', '00'));
+          ret['cmd'].add(baseCmd.replaceFirst('YY', '01'));
+          break;
+        case 'DaytimeStart':
+          ret['cmd'].add(baseCmd.replaceFirst('YY', '02'));
+          ret['cmd'].add(baseCmd.replaceFirst('YY', '03'));
+          break;
+        case 'EveningStart':
+          ret['cmd'].add(baseCmd.replaceFirst('YY', '04'));
+          ret['cmd'].add(baseCmd.replaceFirst('YY', '05'));
+          break;
+        case 'OvernightStart':
+          ret['cmd'].add(baseCmd.replaceFirst('YY', '06'));
+          ret['cmd'].add(baseCmd.replaceFirst('YY', '07'));
+          break;
+      }
+    }
+
+    print(cmd);
+    return ret;
   }
 }

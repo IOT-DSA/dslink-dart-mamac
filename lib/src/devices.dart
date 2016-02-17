@@ -68,7 +68,7 @@ abstract class MamacDevice {
         for(xml.XmlAttribute attr in el.attributes) {
           var attName = attr.name.local;
           var attVal = attr.value;
-          ret[name]['_$attName'] = attVal;
+          ret[name]['@$attName'] = attVal;
         }
       }
 
@@ -96,7 +96,7 @@ abstract class MamacDevice {
   }
 
   Map<String, dynamic> definition(String nodeName, value);
-  bool setValue(node, value);
+  Map<String, dynamic> setValue(node, value);
 }
 
 abstract class EnumHelper {
@@ -105,6 +105,12 @@ abstract class EnumHelper {
   'OvernightHeat', 'OvernightCool'];
   static const List<String> scheduleFan = const ['MorningFan', 'DaytimeFan',
   'EveningFan', 'OvernightFan'];
+  static const List<String> scheduleStartEnd = const ['MorningStart',
+    'MorningEnd', 'DaytimeStart', 'DaytimeEnd', 'EveningStart', 'EveningEnd',
+    'OvernightStart', 'OvernightEnd'];
+  static const List<String> scheduleDays = const ['', 'Sunday', 'Monday',
+    'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Occupied',
+    'Unoccupied'];
   static const List<String> AutoOn = const ['Auto', 'On'];
   static String get enumAutoOn => 'enum[${AutoOn.join(',')}]';
   static const List<String> OffOn = const ['Off', 'On'];
