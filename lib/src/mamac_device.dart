@@ -52,14 +52,14 @@ class MamacDeviceNode extends SimpleNode {
   void updateDevice(Map<String, dynamic> data) {
     void valueUpdate(Map<String, dynamic> map, String pth) {
       for (String key in map.keys) {
-        print('Key: $key, Data: ${map[key]}');
 
         var nd = provider.getNode('$pth/$key');
         if (map[key] is String) {
           if (nd == null) {
             provider.addNode('$pth/$key', device.definition(key, map[key]));
           } else {
-            nd.updateValue(map[key]);
+            var def = device.definition(key, map[key]);
+            nd.updateValue(def['?value']);
           }
         } else if (map[key] is Map) {
           if (nd == null) {
@@ -106,7 +106,7 @@ class DeviceValue extends SimpleNode {
   @override
   bool onSetValue(dynamic newValue) {
     var res = _device?.setValue(this, newValue);
-
-    return res ?? true;
+    print(res);
+    return true;
   }
 }
