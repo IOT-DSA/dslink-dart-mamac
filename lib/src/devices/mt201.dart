@@ -174,6 +174,9 @@ class MT201 extends MamacDevice {
           ret['cmd'].add(baseCmd.replaceFirst('YY', '07'));
           break;
       }
+    } else {
+      ret['cmd'] = cmd;
+      ret['value'] = value;
     }
 
     print(cmd);

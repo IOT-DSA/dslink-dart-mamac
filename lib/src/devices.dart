@@ -95,6 +95,27 @@ abstract class MamacDevice {
     return ret;
   }
 
+  bool onSetValue(DeviceValue node, value) {
+    var oldValue = node.value;
+    var sendMap = setValue(node, value);
+    if (sendMap == null || sendMap['cmd'] == null) return true;
+
+    Uri uri;
+    if (sendMap['cmd'] is Iterable) {
+      for (var i = 0; i < sendMap['cmd'].length; i++) {
+        var key = sendMap['cmd'][i];
+        var val = sendMap['value'][i];
+        uri = rootUri.replace(path: '/', queryParameters: { key: val });
+        client.post(uri);
+      }
+    } else {
+      uri = rootUri.replace(path: '/', queryParameters: {sendMap['cmd'] : sendMap['value']});
+      client.post(uri);
+    }
+
+    return false;
+  }
+
   Map<String, dynamic> definition(String nodeName, value);
   Map<String, dynamic> setValue(node, value);
 }

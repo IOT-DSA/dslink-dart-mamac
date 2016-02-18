@@ -22,8 +22,15 @@ class MamacClient {
     _queue = new Queue<PendingRequest>();
   }
 
-  Future get(Uri uri) async {
-    var pr = new PendingRequest(uri);
+  Future get(Uri uri) {
+    var pr = new PendingRequest(uri, RequestType.get);
+    _queue.add(pr);
+    _sendRequests();
+    return pr.done;
+  }
+
+  Future post(Uri uri) {
+    var pr = new PendingRequest(uri, RequestType.post);
     _queue.add(pr);
     _sendRequests();
     return pr.done;
@@ -39,7 +46,14 @@ class MamacClient {
     HttpClientResponse resp;
     String data;
     try {
-      req = await _client.getUrl(pr.uri);
+      switch (pr.type) {
+        case RequestType.get:
+          req = await _client.getUrl(pr.uri);
+          break;
+        case RequestType.post:
+          req = await _client.postUrl(pr.uri);
+          break;
+      }
       resp = await req.close();
       data = await resp.transform(UTF8.decoder).join();
     } on HttpException catch (e) {
@@ -48,18 +62,26 @@ class MamacClient {
       logger.warning('Failed to get data.', e);
     }
 
+    if (pr.type == RequestType.post) {
+      print('Response Status: ${resp.statusCode}');
+      print('Post Results: $data');
+    }
+
     pr._completer.complete(data);
     _numRequests -= 1;
     _sendRequests();
   }
 }
 
+enum RequestType { get, post }
+
 class PendingRequest {
   Uri uri;
   Completer<String> _completer;
   Future<String> get done => _completer.future;
+  RequestType type;
 
-  PendingRequest(this.uri) {
+  PendingRequest(this.uri, this.type) {
     _completer = new Completer<String>();
   }
 }

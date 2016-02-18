@@ -104,9 +104,5 @@ class DeviceValue extends SimpleNode {
   }
 
   @override
-  bool onSetValue(dynamic newValue) {
-    var res = _device?.setValue(this, newValue);
-    print(res);
-    return true;
-  }
+  bool onSetValue(dynamic newValue) => _device?.onSetValue(this, newValue);
 }
