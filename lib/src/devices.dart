@@ -121,17 +121,11 @@ abstract class MamacDevice {
 }
 
 abstract class EnumHelper {
-  static const List<String> scheduleHeatCool = const ['MorningHeat',
-  'MorningCool', 'DaytimeHeat', 'DaytimeCool', 'EveningHeat', 'EveningCool',
-  'OvernightHeat', 'OvernightCool'];
-  static const List<String> scheduleFan = const ['MorningFan', 'DaytimeFan',
-  'EveningFan', 'OvernightFan'];
-  static const List<String> scheduleStartEnd = const ['MorningStart',
-    'MorningEnd', 'DaytimeStart', 'DaytimeEnd', 'EveningStart', 'EveningEnd',
-    'OvernightStart', 'OvernightEnd'];
   static const List<String> scheduleDays = const ['', 'Sunday', 'Monday',
     'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Occupied',
     'Unoccupied'];
+  static const List<String> HeatCoolAuto = const ['', 'Heat', 'Cool', 'Auto'];
+  static String get enumHeatCoolAuto => 'enum[${HeatCoolAuto.join(',')}]';
   static const List<String> AutoOn = const ['Auto', 'On'];
   static String get enumAutoOn => 'enum[${AutoOn.join(',')}]';
   static const List<String> OffOn = const ['Off', 'On'];

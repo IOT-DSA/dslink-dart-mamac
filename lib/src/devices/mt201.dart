@@ -7,6 +7,14 @@ class MT201 extends MamacDevice {
   static const String type = 'mt201';
   static const String xmlFile = 'mt201ext.xml';
   static const String _idPrefix = 'MAV_';
+  static const List<String> scheduleHeatCool = const ['MorningHeat',
+  'MorningCool', 'DaytimeHeat', 'DaytimeCool', 'EveningHeat', 'EveningCool',
+  'OvernightHeat', 'OvernightCool'];
+  static const List<String> scheduleFan = const ['MorningFan', 'DaytimeFan',
+  'EveningFan', 'OvernightFan'];
+  static const List<String> scheduleStartEnd = const ['MorningStart',
+  'MorningEnd', 'DaytimeStart', 'DaytimeEnd', 'EveningStart', 'EveningEnd',
+  'OvernightStart', 'OvernightEnd'];
 
   String get deviceType => type;
   String get fileName => xmlFile;
@@ -19,14 +27,14 @@ class MT201 extends MamacDevice {
 
     if (nodeName.startsWith('RoomTemp')) {
       ret[r'$writable'] = 'never';
-    } else if ((ind = EnumHelper.scheduleHeatCool.indexOf(nodeName)) != -1) {
+    } else if ((ind = scheduleHeatCool.indexOf(nodeName)) != -1) {
       ret['@cmdid'] = '${_idPrefix}4X_0$ind';
       ret[r'$type'] = 'number';
-    } else if ((ind = EnumHelper.scheduleFan.indexOf(nodeName)) != -1) {
+    } else if ((ind = scheduleFan.indexOf(nodeName)) != -1) {
       ret['@cmdid'] = '${_idPrefix}3X_0$ind';
       ret[r'$type'] = EnumHelper.enumAutoOn;
       ret[r'?value'] = EnumHelper.AutoOn[int.parse(value)];
-    } else if ((ind = EnumHelper.scheduleStartEnd.indexOf(nodeName)) != -1) {
+    } else if ((ind = scheduleStartEnd.indexOf(nodeName)) != -1) {
       ret['@cmdid'] = '${_idPrefix}2X_YY';
     } else {
       switch (nodeName) {
@@ -38,11 +46,11 @@ class MT201 extends MamacDevice {
           break;
         case 'CurrentDate':
           ret['@cmdid'] = '${_idPrefix}00_YY';
-          ret[r'$editor'] = 'date';
+          ret[r'$editor'] = 'daterange';
           break;
         case 'SystemMode':
           ret['@cmdid'] = '${_idPrefix}70_02';
-          ret[r'$type'] = 'enum[Heat,Cool,Auto]';
+          ret[r'$type'] = EnumHelper.enumHeatCoolAuto;
           break;
         case 'TempUnits':
           ret['@cmdid'] = '${_idPrefix}70_01';
@@ -88,10 +96,30 @@ class MT201 extends MamacDevice {
           ret['@cmdid'] = '${_idPrefix}09_16';
           ret[r'$type'] = EnumHelper.enumAutoManual;
           break;
+        case 'OverrideTime':
+          ret['@cmdid'] = '${_idPrefix}70_10';
+          ret[r'$type'] = 'number';
+          ret[r'$editor'] = 'int';
+          ret[r'$min'] = 1;
+          ret[r'$max'] = 10;
+          break;
+        case 'OverrideHeat':
+          ret['@cmdid'] = '${_idPrefix}70_06';
+          ret[r'$type'] = 'number';
+          break;
+        case 'OverrideCool':
+          ret['@cmdid'] = '${_idPrefix}70_07';
+          ret[r'$type'] = 'number';
+          break;
+        case 'OverrideButton':
+          ret['@cmdid'] = '${_idPrefix}70_12';
+          ret[r'$type'] = EnumHelper.enumOffOn;
+          ret[r'?value'] = EnumHelper.OffOn[int.parse(value)];
+          break;
         case 'StartDate':
         case 'EndDate':
           ret['@cmdid'] = '${_idPrefix}XX_YY';
-          ret[r'$editor'] = 'date';
+          ret[r'$editor'] = 'daterange';
           break;
         case 'DateType':
           ret['@cmdid'] = '${_idPrefix}XX_03';
@@ -133,21 +161,21 @@ class MT201 extends MamacDevice {
     if (cmd == null) return null;
     var nodeName = node.name;
 
-    if (EnumHelper.scheduleHeatCool.contains(nodeName)) {
+    if (scheduleHeatCool.contains(nodeName)) {
       var parentNames = node.parent.name.split('_');
       if (parentNames.length > 1) {
         var dayInd = EnumHelper.scheduleDays.indexOf(parentNames[1]);
         ret['cmd'] = cmd.replaceFirst('X', '$dayInd');
         ret['value'] = value;
       }
-    } else if (EnumHelper.scheduleFan.contains(nodeName)) {
+    } else if (scheduleFan.contains(nodeName)) {
       var parentNames = node.parent.name.split('_');
       if (parentNames.length > 1) {
         var dayInd = EnumHelper.scheduleDays.indexOf(parentNames[1]);
         ret['cmd'] = cmd.replaceFirst('X', '$dayInd');
         ret['value'] = EnumHelper.AutoOn.indexOf(value);
       }
-    } else if (EnumHelper.scheduleStartEnd.contains(nodeName)) {
+    } else if (scheduleStartEnd.contains(nodeName)) {
       var parentNames = node.parent.name.split('_');
       if (parentNames.length <= 1) return null;
       var dayInd = EnumHelper.scheduleDays.indexOf(parentNames[1]);
@@ -174,9 +202,63 @@ class MT201 extends MamacDevice {
           ret['cmd'].add(baseCmd.replaceFirst('YY', '07'));
           break;
       }
-    } else {
+    } else if (['FanValue', 'HeatValue', 'Heat2Value', 'CoolValue',
+                'Cool2Value'].contains(nodeName)) {
       ret['cmd'] = cmd;
-      ret['value'] = value;
+      ret['value'] = EnumHelper.OffOn.indexOf(value);
+    } else if (['FanControl', 'HeatControl', 'Heat2Control', 'CoolControl',
+      'Cool2Control'].contains(nodeName)) {
+      ret['cmd'] = cmd;
+      ret['value'] = EnumHelper.AutoManual.indexOf(value);
+    } else if (['StartDate', 'EndDate'].contains(nodeName)) {
+      var parentNames = node.parent.name.split('_');
+      if (parentNames.length < 2) return null;
+      var dateIdOffset = 49;
+      var dateId = int.parse(parentNames[1]) + dateIdOffset;
+      var dates = (value as String).split('/').map((el) => DateTime.parse(el));
+      var baseCmd = cmd.replaceFirst('XX', '$dateId');
+      ret['value'] = [ dates[0].month, dates[0].day, dates[0].year % 100 ];
+      switch (nodeName) {
+        case 'StartDate':
+          ret['cmd'] = [ baseCmd.replaceFirst('YY', '00'),
+            baseCmd.replaceFirst('YY', '01'), baseCmd.replaceFirst('YY', '02')];
+          break;
+        case 'EndDate':
+          ret['cmd'] = [ baseCmd.replaceFirst('YY', '05'),
+            baseCmd.replaceFirst('YY', '06'), baseCmd.replaceFirst('YY', '07') ];
+          break;
+      }
+    } else {
+      switch (nodeName) {
+        case 'CurrentTime':
+          ret['cmd'] = [ cmd.replaceFirst('YY', '22'),
+              cmd.replaceFirst('YY', '23'),
+              cmd.replaceFirst('YY', '24') ];
+          ret['values'] = (value as String).split(':').toList();
+          break;
+        case 'CurrentDate':
+          var dates = (value as String).split('/').map((el) => DateTime.parse(el));
+          ret['cmd'] = [ cmd.replaceFirst('YY', '25'), cmd.replaceFirst('YY', '26'),
+              cmd.replaceFirst('YY', '27')];
+          ret['value'] = [ dates[0].month, dates[0].day, (dates[0].year % 100)];
+          break;
+        case 'SystemMode':
+          ret['cmd'] = cmd;
+          ret['value'] = EnumHelper.HeatCoolAuto.indexOf(value);
+          break;
+        case 'TempUnits':
+          ret['cmd'] = cmd;
+          ret['value'] = value == 'F' ? '1' : '2';
+          break;
+        case 'DateType':
+          ret['cmd'] = cmd;
+          ret['value'] = EnumHelper.UnoccupiedOccupied.indexOf(value);
+          break;
+        default:
+          ret['cmd'] = cmd;
+          ret['value'] = value;
+          break;
+      }
     }
 
     print(cmd);
