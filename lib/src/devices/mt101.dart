@@ -1,11 +1,11 @@
-library dslink.mamac.nodes.devices.mt201;
+library dslink.mamac.nodes.devices.mt101;
 
 import '../mamac_device.dart';
 import '../devices.dart';
 
-class MT201 extends MamacDevice {
-  static const String type = 'mt201';
-  static const String xmlFile = 'mt201ext.xml';
+class MT101 extends MamacDevice {
+  static const String type = 'mt101';
+  static const String xmlFile = 'mt101ext.xml';
   static const String _idPrefix = 'MAV_';
   static const List<String> scheduleHeatCool = const ['MorningHeat',
     'MorningCool', 'DaytimeHeat', 'DaytimeCool', 'EveningHeat', 'EveningCool',
@@ -18,7 +18,7 @@ class MT201 extends MamacDevice {
   String get deviceType => type;
   String get fileName => xmlFile;
 
-  MT201(String address, int refreshRate) : super(address, refreshRate);
+  MT101(String address, int refreshRate) : super(address, refreshRate);
 
   Map<String, dynamic> definition(String nodeName, value) {
     var ret = DeviceValue.definition(value);
@@ -55,49 +55,13 @@ class MT201 extends MamacDevice {
           ret['@cmdid'] = '${_idPrefix}70_02';
           ret[r'$type'] = EnumHelper.enumHeatCoolAuto;
           break;
+        case 'OverrideMode':
+          ret['@cmdid'] = '${_idPrefix}70_05';
+          ret[r'$type'] = EnumHelper.enumOffOn;
+          break;
         case 'TempUnits':
           ret['@cmdid'] = '${_idPrefix}70_01';
           ret[r'$type'] = 'enum[F,C]';
-          break;
-        case 'FanValue':
-          ret['@cmdid'] = '${_idPrefix}05_00';
-          ret[r'$type'] = EnumHelper.enumOffOn;
-          break;
-        case 'FanControl':
-          ret['@cmdid'] = '${_idPrefix}05_16';
-          ret[r'$type'] = EnumHelper.enumAutoManual;
-          break;
-        case 'HeatValue':
-          ret['@cmdid'] = '${_idPrefix}06_00';
-          ret[r'$type'] = EnumHelper.enumOffOn;
-          break;
-        case 'HeatControl':
-          ret['@cmdid'] = '${_idPrefix}06_16';
-          ret[r'$type'] = EnumHelper.enumAutoManual;
-          break;
-        case 'Heat2Value':
-          ret['@cmdid'] = '${_idPrefix}08_00';
-          ret[r'$type'] = EnumHelper.enumOffOn;
-          break;
-        case 'Heat2Control':
-          ret['@cmdid'] = '${_idPrefix}08_16';
-          ret[r'$type'] = EnumHelper.enumAutoManual;
-          break;
-        case 'CoolValue':
-          ret['@cmdid'] = '${_idPrefix}07_00';
-          ret[r'$type'] = EnumHelper.enumOffOn;
-          break;
-        case 'CoolControl':
-          ret['@cmdid'] = '${_idPrefix}07_16';
-          ret[r'$type'] = EnumHelper.enumAutoManual;
-          break;
-        case 'Cool2Value':
-          ret['@cmdid'] = '${_idPrefix}09_00';
-          ret[r'$type'] = EnumHelper.enumOffOn;
-          break;
-        case 'Cool2Control':
-          ret['@cmdid'] = '${_idPrefix}09_16';
-          ret[r'$type'] = EnumHelper.enumAutoManual;
           break;
         case 'OverrideTime':
           ret['@cmdid'] = '${_idPrefix}70_10';
@@ -323,14 +287,6 @@ class MT201 extends MamacDevice {
           ret['cmd'].add(baseCmd.replaceFirst('YY', '05'));
           break;
       }
-    } else if (['FanValue', 'HeatValue', 'Heat2Value', 'CoolValue',
-                'Cool2Value'].contains(nodeName)) {
-      ret['cmd'] = cmd;
-      ret['value'] = EnumHelper.OffOn.indexOf(value);
-    } else if (['FanControl', 'HeatControl', 'Heat2Control', 'CoolControl',
-      'Cool2Control'].contains(nodeName)) {
-      ret['cmd'] = cmd;
-      ret['value'] = EnumHelper.AutoManual.indexOf(value);
     } else if (['StartDate', 'EndDate'].contains(nodeName)) {
       var parentNames = node.parent.name.split('_');
       if (parentNames.length < 2) return null;
@@ -375,6 +331,7 @@ class MT201 extends MamacDevice {
           ret['cmd'] = cmd;
           ret['value'] = EnumHelper.UnoccupiedOccupied.indexOf(value);
           break;
+        case 'OverrideMode':
         case 'HeatFanControl':
         case 'OverrideButton':
         case 'AttachLog':

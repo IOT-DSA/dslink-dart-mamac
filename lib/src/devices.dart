@@ -6,6 +6,7 @@ import 'package:xml/xml.dart' as xml;
 
 import 'mamac_client.dart';
 import 'devices/mt201.dart';
+import 'devices/mt101.dart';
 
 import 'mamac_device.dart';
 
@@ -38,6 +39,8 @@ abstract class MamacDevice {
     switch (type) {
       case MT201.type:
         return new MT201(address, refreshRate);
+      case MT101.type:
+        return new MT101(address, refreshRate);
     }
   }
 
