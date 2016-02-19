@@ -8,13 +8,12 @@ class MT201 extends MamacDevice {
   static const String xmlFile = 'mt201ext.xml';
   static const String _idPrefix = 'MAV_';
   static const List<String> scheduleHeatCool = const ['MorningHeat',
-  'MorningCool', 'DaytimeHeat', 'DaytimeCool', 'EveningHeat', 'EveningCool',
-  'OvernightHeat', 'OvernightCool'];
+    'MorningCool', 'DaytimeHeat', 'DaytimeCool', 'EveningHeat', 'EveningCool',
+    'OvernightHeat', 'OvernightCool'];
   static const List<String> scheduleFan = const ['MorningFan', 'DaytimeFan',
-  'EveningFan', 'OvernightFan'];
+    'EveningFan', 'OvernightFan'];
   static const List<String> scheduleStartEnd = const ['MorningStart',
-  'MorningEnd', 'DaytimeStart', 'DaytimeEnd', 'EveningStart', 'EveningEnd',
-  'OvernightStart', 'OvernightEnd'];
+    'DaytimeStart', 'EveningStart', 'OvernightStart'];
 
   String get deviceType => type;
   String get fileName => xmlFile;
@@ -102,20 +101,103 @@ class MT201 extends MamacDevice {
           ret[r'$editor'] = 'int';
           ret[r'$min'] = 1;
           ret[r'$max'] = 10;
+          ret[r'?value'] = int.parse(value);
           break;
         case 'OverrideHeat':
           ret['@cmdid'] = '${_idPrefix}70_06';
           ret[r'$type'] = 'number';
+          ret[r'?value'] = int.parse(value);
           break;
         case 'OverrideCool':
           ret['@cmdid'] = '${_idPrefix}70_07';
           ret[r'$type'] = 'number';
+          ret[r'?value'] = int.parse(value);
           break;
         case 'OverrideButton':
           ret['@cmdid'] = '${_idPrefix}70_12';
           ret[r'$type'] = EnumHelper.enumOffOn;
           ret[r'?value'] = EnumHelper.OffOn[int.parse(value)];
           break;
+        case 'SetpointDifferential':
+          ret['@cmdid'] = '${_idPrefix}70_03';
+          ret[r'$type'] = 'number';
+          ret[r'$editor'] = 'int';
+          ret[r'$max'] = 3;
+          ret[r'$min'] = 1;
+          ret[r'?value'] = int.parse(value);
+          break;
+        case 'HeatFanControl':
+          ret['@cmdid'] = '${_idPrefix}70_13';
+          ret[r'$type'] = EnumHelper.enumOffOn;
+          ret[r'?value'] = EnumHelper.OffOn[int.parse(value)];
+          break;
+        case 'CycleTime':
+          ret['@cmdid'] = '${_idPrefix}70_04';
+          ret[r'$type'] = 'number';
+          ret[r'$editor'] = 'int';
+          ret[r'$min'] = 1;
+          ret[r'$max'] = 10;
+          ret[r'?value'] = int.parse(value);
+          break;
+        case 'FanOffDelay':
+          ret['@cmdid'] = '${_idPrefix}70_08';
+          ret[r'$type'] = 'number';
+          ret[r'$editor'] = 'int';
+          ret[r'$min'] = 1;
+          ret[r'$max'] = 10;
+          ret[r'?value'] = int.parse(value);
+          break;
+        case 'MinimumRunTime':
+          ret['@cmdid'] = '${_idPrefix}70_09';
+          ret[r'$type'] = 'number';
+          ret[r'$editor'] = 'int';
+          ret[r'$min'] = 1;
+          ret[r'$max'] = 10;
+          ret[r'?value'] = int.parse(value);
+          break;
+        case 'Stage2DelayHeat':
+          ret['@cmdid'] = '${_idPrefix}70_31';
+          ret[r'$type'] = 'number';
+          ret[r'$editor'] = 'int';
+          ret[r'$min'] = 5;
+          ret[r'$max'] = 20;
+          ret[r'?value'] = int.parse(value);
+          break;
+        case 'Stage2DelayCool':
+          ret['@cmdid'] = '${_idPrefix}70_34';
+          ret[r'$type'] = 'number';
+          ret[r'$editor'] = 'int';
+          ret[r'$min'] = 5;
+          ret[r'$max'] = 20;
+          ret[r'?value'] = int.parse(value);
+          break;
+        case 'Stage2LogicHeat':
+          ret['@cmdid'] = '${_idPrefix}70_36';
+          ret[r'$type'] = EnumHelper.enumLogicOrAnd;
+          ret[r'?value'] = EnumHelper.LogicOrAnd[int.parse(value)];
+          break;
+        case 'Stage2LogicCool':
+          ret['@cmdid'] = '${_idPrefix}70_38';
+          ret[r'$type'] = EnumHelper.enumLogicOrAnd;
+          ret[r'?value'] = EnumHelper.LogicOrAnd[int.parse(value)];
+          break;
+        case 'Stage2TurnOnDiffHeat':
+          ret['@cmdid'] = '${_idPrefix}70_32';
+          ret[r'$type'] = 'number';
+          ret[r'$editor'] = 'int';
+          ret[r'$min'] = 1;
+          ret[r'$max'] = 5;
+          ret[r'?value'] = int.parse(value);
+          break;
+        case 'Stage2TurnOnDiffCool':
+          ret['@cmdid'] = '${_idPrefix}70_35';
+          ret[r'$type'] = 'number';
+          ret[r'$editor'] = 'int';
+          ret[r'$min'] = 1;
+          ret[r'$max'] = 5;
+          ret[r'?value'] = int.parse(value);
+          break;
+        // Schedules Special Days
         case 'StartDate':
         case 'EndDate':
           ret['@cmdid'] = '${_idPrefix}XX_YY';
@@ -131,6 +213,29 @@ class MT201 extends MamacDevice {
           ret['@cmdid'] = '${_idPrefix}01_11';
           ret[r'$type'] = EnumHelper.enumDisabledEnabled;
           ret['?value'] = EnumHelper.DisabledEnabled[int.parse(value)];
+          break;
+        case 'LowerValue':
+          ret['@cmdid'] = '${_idPrefix}01_12';
+          ret[r'$type'] = 'number';
+          ret[r'?value'] = num.parse(value);
+          break;
+        case 'UpperValue':
+          ret['@cmdid'] = '${_idPrefix}01_13';
+          ret[r'$type'] = 'number';
+          ret[r'?value'] = num.parse(value);
+          break;
+        case 'AlertWait':
+          ret['@cmdid'] = '${_idPrefix}01_18';
+          ret[r'$type'] = 'number';
+          ret[r'$editor'] = 'int';
+          ret[r'$min'] = 1;
+          ret[r'$max'] = 300;
+          ret[r'?value'] = int.parse(value);
+          break;
+        case 'AttachLog':
+          ret['@cmdid'] = '${_idPrefix}01_18';
+          ret[r'$type'] = EnumHelper.enumOffOn;
+          ret[r'?value'] = EnumHelper.OffOn[int.parse(value)];
           break;
         // LOGGING
         case 'LoggingEnabled':
@@ -149,6 +254,8 @@ class MT201 extends MamacDevice {
         case 'SampleRate':
           ret['@cmdid'] = '${_idPrefix}11_YY';
           break;
+        default:
+          ret[r'$writable'] = 'never';
       }
     }
 
@@ -175,11 +282,16 @@ class MT201 extends MamacDevice {
         ret['cmd'] = cmd.replaceFirst('X', '$dayInd');
         ret['value'] = EnumHelper.AutoOn.indexOf(value);
       }
-    } else if (scheduleStartEnd.contains(nodeName)) {
-      var parentNames = node.parent.name.split('_');
-      if (parentNames.length <= 1) return null;
-      var dayInd = EnumHelper.scheduleDays.indexOf(parentNames[1]);
-      var baseCmd = cmd.replaceFirst('X', '$dayInd');
+    } else if (scheduleStartEnd.contains(nodeName) || nodeName == 'SampleRate') {
+      var baseCmd = '';
+      if (nodeName == 'SampleRate') {
+        baseCmd = cmd;
+      } else {
+        var parentNames = node.parent.name.split('_');
+        if (parentNames.length <= 1) return null;
+        var dayInd = EnumHelper.scheduleDays.indexOf(parentNames[1]);
+        baseCmd = cmd.replaceFirst('X', '$dayInd');
+      }
       var hourMin = value.split(':');
       if (hourMin.length <= 1) return null;
       ret['cmd'] = [];
@@ -200,6 +312,11 @@ class MT201 extends MamacDevice {
         case 'OvernightStart':
           ret['cmd'].add(baseCmd.replaceFirst('YY', '06'));
           ret['cmd'].add(baseCmd.replaceFirst('YY', '07'));
+          break;
+        case 'SampleRate':
+          ret['cmd'].add(baseCmd.replaceFirst('YY', '03'));
+          ret['cmd'].add(baseCmd.replaceFirst('YY', '04'));
+          ret['cmd'].add(baseCmd.replaceFirst('YY', '05'));
           break;
       }
     } else if (['FanValue', 'HeatValue', 'Heat2Value', 'CoolValue',
@@ -253,6 +370,22 @@ class MT201 extends MamacDevice {
         case 'DateType':
           ret['cmd'] = cmd;
           ret['value'] = EnumHelper.UnoccupiedOccupied.indexOf(value);
+          break;
+        case 'HeatFanControl':
+        case 'OverrideButton':
+        case 'AttachLog':
+          ret['cmd'] = cmd;
+          ret['value'] = EnumHelper.OffOn.indexOf(value);
+          break;
+        case 'Stage2LogicHeat':
+        case 'Stage2LogicCool':
+          ret['cmd'] = cmd;
+          ret['value'] = EnumHelper.LogicOrAnd.indexOf(value);
+          break;
+        case 'AlertEnabled':
+        case 'LoggingEnabled':
+          ret['cmd'] = cmd;
+          ret['value'] = EnumHelper.DisabledEnabled.indexOf(value);
           break;
         default:
           ret['cmd'] = cmd;

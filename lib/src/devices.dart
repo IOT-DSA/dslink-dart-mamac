@@ -125,7 +125,8 @@ abstract class EnumHelper {
     'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Occupied',
     'Unoccupied'];
   static const List<String> HeatCoolAuto = const ['', 'Heat', 'Cool', 'Auto'];
-  static String get enumHeatCoolAuto => 'enum[${HeatCoolAuto.join(',')}]';
+  static String get enumHeatCoolAuto =>
+      'enum[${HeatCoolAuto.where((el) => el.isNotEmpty).join(',')}]';
   static const List<String> AutoOn = const ['Auto', 'On'];
   static String get enumAutoOn => 'enum[${AutoOn.join(',')}]';
   static const List<String> OffOn = const ['Off', 'On'];
@@ -137,4 +138,7 @@ abstract class EnumHelper {
   static const List<String> UnoccupiedOccupied = const ['Unoccupied', 'Occupied'];
   static String get enumUnoccupiedOccupied =>
       'enum[${UnoccupiedOccupied.join(',')}]';
+  static const List<String> LogicOrAnd = const ['', 'OR', 'AND'];
+  static String get enumLogicOrAnd =>
+      'enum[${LogicOrAnd.where((el) => el.isNotEmpty).join(',')}]';
 }
