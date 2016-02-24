@@ -228,7 +228,7 @@ class MT201 extends MamacDevice {
           ret['?value'] = EnumHelper.UnoccupiedOccupied[int.parse(value)];
           break;
         // ALERTS
-        case 'AlertEnabled':
+        case 'AlertEnable':
           ret['@cmdid'] = '${_idPrefix}01_11';
           ret[r'$type'] = EnumHelper.enumDisabledEnabled;
           ret['?value'] = EnumHelper.DisabledEnabled[int.parse(value)];
