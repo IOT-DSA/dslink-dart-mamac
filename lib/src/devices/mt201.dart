@@ -110,12 +110,12 @@ class MT201 extends MamacDevice {
         case 'OverrideHeat':
           ret['@cmdid'] = '${_idPrefix}70_06';
           ret[r'$type'] = 'number';
-          ret[r'?value'] = int.parse(value);
+          ret[r'?value'] = num.parse(value);
           break;
         case 'OverrideCool':
           ret['@cmdid'] = '${_idPrefix}70_07';
           ret[r'$type'] = 'number';
-          ret[r'?value'] = int.parse(value);
+          ret[r'?value'] = num.parse(value);
           break;
         case 'OverrideButton':
           ret['@cmdid'] = '${_idPrefix}70_12';
