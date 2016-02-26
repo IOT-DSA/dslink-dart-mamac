@@ -1,8 +1,10 @@
 import '../devices.dart';
 import '../../mamac_nodes.dart';
+import 'mamac_device.dart';
+import 'devices.dart';
 
-class NodeParser {
-  String _idPrefix;
+abstract class NodeParser {
+  static const String _idPrefix = 'MAV_';
 
   static const List<String> scheduleHeatCool = const [
     'MorningHeat',
@@ -27,9 +29,7 @@ class NodeParser {
     'OvernightStart'
   ];
 
-  NodeParser(this._idPrefix);
-
-  Map<String, dynamic> parseNode(String nodeName, dynamic value) {
+  static Map<String, dynamic> parseNode(String nodeName, dynamic value) {
     var ret = DeviceValue.definition(value);
 
     var ind = -1;
@@ -280,7 +280,7 @@ class NodeParser {
     return ret;
   }
 
-  Map<String, dynamic> buildSetCommand(DeviceValue node, dynamic value) {
+  static Map<String, dynamic> buildSetCommand(DeviceValue node, dynamic value) {
     var ret = {'cmd': null, 'value': null};
     String cmd = node.getAttribute('@cmdid');
     if (cmd == null) return null;
