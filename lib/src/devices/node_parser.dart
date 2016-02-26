@@ -29,8 +29,9 @@ class NodeParser {
 
   NodeParser(this._idPrefix);
 
-  Map<String, dynamic> parseNode(
-      String nodeName, dynamic value, Map<String, dynamic> ret) {
+  Map<String, dynamic> parseNode(String nodeName, dynamic value) {
+    var ret = DeviceValue.definition(value);
+
     var ind = -1;
 
     if (nodeName.startsWith('RoomTemp')) {
@@ -173,6 +174,46 @@ class NodeParser {
           ret[r'$min'] = 1;
           ret[r'$max'] = 5;
           ret[r'?value'] = int.parse(value);
+          break;
+        case 'FanValue':
+          ret['@cmdid'] = '${_idPrefix}05_00';
+          ret[r'$type'] = EnumHelper.enumOffOn;
+          break;
+        case 'FanControl':
+          ret['@cmdid'] = '${_idPrefix}05_16';
+          ret[r'$type'] = EnumHelper.enumAutoManual;
+          break;
+        case 'HeatValue':
+          ret['@cmdid'] = '${_idPrefix}06_00';
+          ret[r'$type'] = EnumHelper.enumOffOn;
+          break;
+        case 'HeatControl':
+          ret['@cmdid'] = '${_idPrefix}06_16';
+          ret[r'$type'] = EnumHelper.enumAutoManual;
+          break;
+        case 'Heat2Value':
+          ret['@cmdid'] = '${_idPrefix}08_00';
+          ret[r'$type'] = EnumHelper.enumOffOn;
+          break;
+        case 'Heat2Control':
+          ret['@cmdid'] = '${_idPrefix}08_16';
+          ret[r'$type'] = EnumHelper.enumAutoManual;
+          break;
+        case 'CoolValue':
+          ret['@cmdid'] = '${_idPrefix}07_00';
+          ret[r'$type'] = EnumHelper.enumOffOn;
+          break;
+        case 'CoolControl':
+          ret['@cmdid'] = '${_idPrefix}07_16';
+          ret[r'$type'] = EnumHelper.enumAutoManual;
+          break;
+        case 'Cool2Value':
+          ret['@cmdid'] = '${_idPrefix}09_00';
+          ret[r'$type'] = EnumHelper.enumOffOn;
+          break;
+        case 'Cool2Control':
+          ret['@cmdid'] = '${_idPrefix}09_16';
+          ret[r'$type'] = EnumHelper.enumAutoManual;
           break;
         // Schedules Special Days
         case 'StartDate':
@@ -333,7 +374,7 @@ class NodeParser {
           break;
         case 'CurrentDate':
           var dates =
-          (value as String).split('/').map((el) => DateTime.parse(el));
+              (value as String).split('/').map((el) => DateTime.parse(el));
           ret['cmd'] = [
             cmd.replaceFirst('YY', '25'),
             cmd.replaceFirst('YY', '26'),
@@ -357,8 +398,21 @@ class NodeParser {
         case 'HeatFanControl':
         case 'OverrideButton':
         case 'AttachLog':
+        case 'FanValue':
+        case 'HeatValue':
+        case 'Heat2Value':
+        case 'CoolValue':
+        case 'Cool2Value':
           ret['cmd'] = cmd;
           ret['value'] = EnumHelper.OffOn.indexOf(value);
+          break;
+        case 'FanControl':
+        case 'HeatControl':
+        case 'Heat2Control':
+        case 'CoolControl':
+        case 'Cool2Control':
+          ret['cmd'] = cmd;
+          ret['value'] = EnumHelper.AutoManual.indexOf(value);
           break;
         case 'Stage2LogicHeat':
         case 'Stage2LogicCool':

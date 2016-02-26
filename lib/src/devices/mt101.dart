@@ -19,9 +19,7 @@ class MT101 extends MamacDevice {
   }
 
   Map<String, dynamic> definition(String nodeName, value) {
-    var ret = DeviceValue.definition(value);
-
-    return _nodeParser.parseNode(nodeName, value, ret);
+    return _nodeParser.parseNode(nodeName, value);
   }
 
   Map<String, dynamic> setValue(DeviceValue node, value) {
