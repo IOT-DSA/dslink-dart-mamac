@@ -2,14 +2,14 @@ import '../mamac_device.dart';
 import '../devices.dart';
 import '../node_parser.dart';
 
-class CF201 extends MamacDevice {
-  static const String type = 'cf201';
-  static const String xmlFile = 'cf201.xml';
+class CL101 extends MamacDevice {
+  static const String type = 'cl101';
+  static const String xmlFile = 'cl101.xml';
 
   String get deviceType => type;
   String get fileName => xmlFile;
 
-  CF201(String address, int refreshRate) : super(address, refreshRate);
+  CL101(String address, int refreshRate) : super(address, refreshRate);
 
   Map<String, dynamic> definition(String nodeName, value) =>
       NodeParser.parseNode(nodeName, value);

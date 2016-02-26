@@ -8,6 +8,8 @@ import 'mamac_device.dart';
 import 'devices/mt201.dart';
 import 'devices/mt101.dart';
 import 'devices/cf201.dart';
+import 'devices/cl101.dart';
+import 'devices/mt205.dart';
 
 abstract class MamacDevice {
   final String address;
@@ -42,6 +44,10 @@ abstract class MamacDevice {
         return new MT101(address, refreshRate);
       case CF201.type:
         return new CF201(address, refreshRate);
+      case CL101.type:
+        return new CL101(address, refreshRate);
+      case MT205.type:
+        return new MT205(address, refreshRate);
     }
   }
 

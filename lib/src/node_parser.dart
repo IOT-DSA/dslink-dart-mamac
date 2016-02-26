@@ -71,6 +71,11 @@ abstract class NodeParser {
           ret['@cmdid'] = '${_idPrefix}70_01';
           ret[r'$type'] = 'enum[F,C]';
           break;
+        case 'FreezerUnits':
+        case 'CoolerUnits':
+          ret['@cmdid'] = '${_idPrefix}01_05';
+          ret[r'$type'] = 'enum[F,C]';
+          break;
         case 'OverrideTime':
           ret['@cmdid'] = '${_idPrefix}70_10';
           ret[r'$type'] = 'number';
@@ -385,6 +390,8 @@ abstract class NodeParser {
           ret['value'] = EnumHelper.HeatCoolAuto.indexOf(value);
           break;
         case 'TempUnits':
+        case 'CoolerUnits':
+        case 'FreezerUnits':
           ret['cmd'] = cmd;
           ret['value'] = value == 'F' ? '1' : '2';
           break;
