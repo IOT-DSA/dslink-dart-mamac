@@ -5,10 +5,11 @@ import 'dart:async';
 import 'package:xml/xml.dart' as xml;
 
 import 'mamac_client.dart';
+import 'mamac_device.dart';
+
 import 'devices/mt201.dart';
 import 'devices/mt101.dart';
-
-import 'mamac_device.dart';
+import 'devices/cf201.dart';
 
 abstract class MamacDevice {
   final String address;
@@ -41,6 +42,8 @@ abstract class MamacDevice {
         return new MT201(address, refreshRate);
       case MT101.type:
         return new MT101(address, refreshRate);
+      case CF201.type:
+        return new CF201(address, refreshRate);
     }
   }
 
