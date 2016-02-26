@@ -5,7 +5,7 @@ import '../devices.dart';
 
 class CF201 extends MamacDevice {
   static const String type = 'cf201';
-  static const String xmlFile = 'cf201xml.txt';
+  static const String xmlFile = 'cf201.xml';
   static const String _idPrefix = 'MAV_';
 
   String get deviceType => type;
