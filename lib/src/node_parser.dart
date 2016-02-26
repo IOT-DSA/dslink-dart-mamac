@@ -264,6 +264,21 @@ abstract class NodeParser {
           ret[r'$type'] = EnumHelper.enumDisabledEnabled;
           ret['?value'] = EnumHelper.DisabledEnabled[int.parse(value)];
           break;
+        case 'LightLog':
+          ret['@cmdid'] = '${_idPrefix}1X_01';
+          ret[r'$type'] = EnumHelper.enumDisabledEnabled;
+          ret['?value'] = EnumHelper.DisabledEnabled[int.parse(value)];
+          break;
+        case 'LightOutputValue':
+          ret['@cmdid'] = '${_idPrefix}0X_00';
+          ret[r'$type'] = EnumHelper.enumOffOn;
+          ret['?value'] = EnumHelper.OffOn[int.parse(value)];
+          break;
+        case 'LightOutputControl':
+          ret['@cmdid'] = '${_idPrefix}0X_16';
+          ret[r'$type'] = EnumHelper.enumAutoManual;
+          ret['?value'] = EnumHelper.AutoManual[int.parse(value)];
+          break;
         case 'MaxSamples':
           ret['@cmdid'] = '${_idPrefix}11_02';
           ret[r'$type'] = 'number';
@@ -416,6 +431,7 @@ abstract class NodeParser {
         case 'Heat2Control':
         case 'CoolControl':
         case 'Cool2Control':
+        case 'LightOutputControl':
           ret['cmd'] = cmd;
           ret['value'] = EnumHelper.AutoManual.indexOf(value);
           break;
@@ -429,6 +445,18 @@ abstract class NodeParser {
           ret['cmd'] = cmd;
           ret['value'] = EnumHelper.DisabledEnabled.indexOf(value);
           break;
+        case 'LightLog':
+          var enumValueFinder = EnumHelper.DisabledEnabled.indexOf;
+          getLightNodeValue(node, ret, cmd, value, 0, enumValueFinder);
+          break;
+        case 'LightOutputValue':
+          var enumValueFinder = EnumHelper.OffOn.indexOf;
+          getLightNodeValue(node, ret, cmd, value, 5, enumValueFinder);
+          break;
+        case 'LightOutputControl':
+          var enumValueFinder = EnumHelper.AutoManual.indexOf;
+          getLightNodeValue(node, ret, cmd, value, 5, enumValueFinder);
+          break;
         default:
           ret['cmd'] = cmd;
           ret['value'] = value;
@@ -438,5 +466,17 @@ abstract class NodeParser {
 
     print(cmd);
     return ret;
+  }
+
+  static void getLightNodeValue(DeviceValue node, Map ret, String cmd, value,
+      int variableOffset, int getIndexOf(String value)) {
+    var parentName = node.parent.name;
+    var lightRegex = new RegExp(r'Light\d');
+    if (lightRegex.hasMatch(parentName)) {
+      var lightIndexAsString = parentName.replaceFirst('Light', '');
+      var lightIndex = int.parse(lightIndexAsString);
+      ret['cmd'] = cmd.replaceFirst('X', '${lightIndex + variableOffset}');
+      ret['value'] = getIndexOf(value);
+    }
   }
 }
