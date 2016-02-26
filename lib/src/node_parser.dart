@@ -1,7 +1,5 @@
-import '../devices.dart';
-import '../../mamac_nodes.dart';
-import 'mamac_device.dart';
 import 'devices.dart';
+import 'mamac_device.dart';
 
 abstract class NodeParser {
   static const String _idPrefix = 'MAV_';
@@ -84,12 +82,12 @@ abstract class NodeParser {
         case 'OverrideHeat':
           ret['@cmdid'] = '${_idPrefix}70_06';
           ret[r'$type'] = 'number';
-          ret[r'?value'] = int.parse(value);
+          ret[r'?value'] = num.parse(value);
           break;
         case 'OverrideCool':
           ret['@cmdid'] = '${_idPrefix}70_07';
           ret[r'$type'] = 'number';
-          ret[r'?value'] = int.parse(value);
+          ret[r'?value'] = num.parse(value);
           break;
         case 'OverrideButton':
           ret['@cmdid'] = '${_idPrefix}70_12';

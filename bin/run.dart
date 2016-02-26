@@ -1,9 +1,6 @@
-library dslink.mamac.run;
-
 import 'dart:async';
 
 import 'package:dslink/dslink.dart';
-
 import 'package:dslink_mamac/mamac_nodes.dart';
 
 Future main(List<String> args) async {

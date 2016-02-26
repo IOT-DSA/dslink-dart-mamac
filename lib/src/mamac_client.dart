@@ -1,5 +1,3 @@
-library dslink.mamac.client;
-
 import 'dart:async';
 import 'dart:convert' show UTF8;
 import 'dart:collection' show Queue;

@@ -1,5 +1,3 @@
-library dslink.mamac.nodes.devices.mt201;
-
 import '../mamac_device.dart';
 import '../devices.dart';
 import '../node_parser.dart';

@@ -1,5 +1,3 @@
-library dslink.mamac.nodes.device;
-
 import 'dart:async';
 
 import 'package:dslink/dslink.dart';

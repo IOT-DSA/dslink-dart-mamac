@@ -1,5 +1,3 @@
-library dslink.mamac.devices;
-
 import 'dart:async';
 
 import 'package:xml/xml.dart' as xml;
