@@ -7,13 +7,28 @@ class MT201 extends MamacDevice {
   static const String type = 'mt201';
   static const String xmlFile = 'mt201ext.xml';
   static const String _idPrefix = 'MAV_';
-  static const List<String> scheduleHeatCool = const ['MorningHeat',
-    'MorningCool', 'DaytimeHeat', 'DaytimeCool', 'EveningHeat', 'EveningCool',
-    'OvernightHeat', 'OvernightCool'];
-  static const List<String> scheduleFan = const ['MorningFan', 'DaytimeFan',
-    'EveningFan', 'OvernightFan'];
-  static const List<String> scheduleStartEnd = const ['MorningStart',
-    'DaytimeStart', 'EveningStart', 'OvernightStart'];
+  static const List<String> scheduleHeatCool = const [
+    'MorningHeat',
+    'MorningCool',
+    'DaytimeHeat',
+    'DaytimeCool',
+    'EveningHeat',
+    'EveningCool',
+    'OvernightHeat',
+    'OvernightCool'
+  ];
+  static const List<String> scheduleFan = const [
+    'MorningFan',
+    'DaytimeFan',
+    'EveningFan',
+    'OvernightFan'
+  ];
+  static const List<String> scheduleStartEnd = const [
+    'MorningStart',
+    'DaytimeStart',
+    'EveningStart',
+    'OvernightStart'
+  ];
 
   String get deviceType => type;
   String get fileName => xmlFile;
@@ -267,7 +282,7 @@ class MT201 extends MamacDevice {
   }
 
   Map<String, dynamic> setValue(DeviceValue node, value) {
-    var ret = { 'cmd' : null, 'value' : null };
+    var ret = {'cmd': null, 'value': null};
     String cmd = node.getAttribute('@cmdid');
     if (cmd == null) return null;
     var nodeName = node.name;
@@ -286,7 +301,8 @@ class MT201 extends MamacDevice {
         ret['cmd'] = cmd.replaceFirst('X', '$dayInd');
         ret['value'] = EnumHelper.AutoOn.indexOf(value);
       }
-    } else if (scheduleStartEnd.contains(nodeName) || nodeName == 'SampleRate') {
+    } else if (scheduleStartEnd.contains(nodeName) ||
+        nodeName == 'SampleRate') {
       var baseCmd = '';
       if (nodeName == 'SampleRate') {
         baseCmd = cmd;
@@ -323,12 +339,22 @@ class MT201 extends MamacDevice {
           ret['cmd'].add(baseCmd.replaceFirst('YY', '05'));
           break;
       }
-    } else if (['FanValue', 'HeatValue', 'Heat2Value', 'CoolValue',
-                'Cool2Value'].contains(nodeName)) {
+    } else if ([
+      'FanValue',
+      'HeatValue',
+      'Heat2Value',
+      'CoolValue',
+      'Cool2Value'
+    ].contains(nodeName)) {
       ret['cmd'] = cmd;
       ret['value'] = EnumHelper.OffOn.indexOf(value);
-    } else if (['FanControl', 'HeatControl', 'Heat2Control', 'CoolControl',
-      'Cool2Control'].contains(nodeName)) {
+    } else if ([
+      'FanControl',
+      'HeatControl',
+      'Heat2Control',
+      'CoolControl',
+      'Cool2Control'
+    ].contains(nodeName)) {
       ret['cmd'] = cmd;
       ret['value'] = EnumHelper.AutoManual.indexOf(value);
     } else if (['StartDate', 'EndDate'].contains(nodeName)) {
@@ -338,30 +364,42 @@ class MT201 extends MamacDevice {
       var dateId = int.parse(parentNames[1]) + dateIdOffset;
       var dates = (value as String).split('/').map((el) => DateTime.parse(el));
       var baseCmd = cmd.replaceFirst('XX', '$dateId');
-      ret['value'] = [ dates[0].month, dates[0].day, dates[0].year % 100 ];
+      ret['value'] = [dates[0].month, dates[0].day, dates[0].year % 100];
       switch (nodeName) {
         case 'StartDate':
-          ret['cmd'] = [ baseCmd.replaceFirst('YY', '00'),
-            baseCmd.replaceFirst('YY', '01'), baseCmd.replaceFirst('YY', '02')];
+          ret['cmd'] = [
+            baseCmd.replaceFirst('YY', '00'),
+            baseCmd.replaceFirst('YY', '01'),
+            baseCmd.replaceFirst('YY', '02')
+          ];
           break;
         case 'EndDate':
-          ret['cmd'] = [ baseCmd.replaceFirst('YY', '05'),
-            baseCmd.replaceFirst('YY', '06'), baseCmd.replaceFirst('YY', '07') ];
+          ret['cmd'] = [
+            baseCmd.replaceFirst('YY', '05'),
+            baseCmd.replaceFirst('YY', '06'),
+            baseCmd.replaceFirst('YY', '07')
+          ];
           break;
       }
     } else {
       switch (nodeName) {
         case 'CurrentTime':
-          ret['cmd'] = [ cmd.replaceFirst('YY', '22'),
-              cmd.replaceFirst('YY', '23'),
-              cmd.replaceFirst('YY', '24') ];
+          ret['cmd'] = [
+            cmd.replaceFirst('YY', '22'),
+            cmd.replaceFirst('YY', '23'),
+            cmd.replaceFirst('YY', '24')
+          ];
           ret['values'] = (value as String).split(':').toList();
           break;
         case 'CurrentDate':
-          var dates = (value as String).split('/').map((el) => DateTime.parse(el));
-          ret['cmd'] = [ cmd.replaceFirst('YY', '25'), cmd.replaceFirst('YY', '26'),
-              cmd.replaceFirst('YY', '27')];
-          ret['value'] = [ dates[0].month, dates[0].day, (dates[0].year % 100)];
+          var dates =
+              (value as String).split('/').map((el) => DateTime.parse(el));
+          ret['cmd'] = [
+            cmd.replaceFirst('YY', '25'),
+            cmd.replaceFirst('YY', '26'),
+            cmd.replaceFirst('YY', '27')
+          ];
+          ret['value'] = [dates[0].month, dates[0].day, (dates[0].year % 100)];
           break;
         case 'SystemMode':
           ret['cmd'] = cmd;

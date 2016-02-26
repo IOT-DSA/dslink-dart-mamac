@@ -30,8 +30,8 @@ abstract class MamacDevice {
   MamacDevice(this.address, this.refreshRate) : client = new MamacClient() {
     rootUri = Uri.parse(address);
     _controller = new StreamController<Map<String, dynamic>>();
-    _refreshTimer = new Timer.periodic(new Duration(seconds: refreshRate),
-        update);
+    _refreshTimer =
+        new Timer.periodic(new Duration(seconds: refreshRate), update);
     update(null);
   }
 
@@ -60,7 +60,6 @@ abstract class MamacDevice {
     pendingUpdate = false;
   }
 
-
   Map<String, dynamic> processData() {
     Map<String, dynamic> getData(xml.XmlElement el) {
       var ret = new Map<String, dynamic>();
@@ -68,7 +67,7 @@ abstract class MamacDevice {
       if (el.attributes.isNotEmpty) {
         name = '${name}_${el.attributes.map((attr) => attr.value).join('_')}';
         ret[name] = new Map();
-        for(xml.XmlAttribute attr in el.attributes) {
+        for (xml.XmlAttribute attr in el.attributes) {
           var attName = attr.name.local;
           var attVal = attr.value;
           ret[name]['@$attName'] = attVal;
@@ -108,11 +107,12 @@ abstract class MamacDevice {
       for (var i = 0; i < sendMap['cmd'].length; i++) {
         var key = sendMap['cmd'][i];
         var val = sendMap['value'][i];
-        uri = rootUri.replace(path: '/', queryParameters: { key: val });
+        uri = rootUri.replace(path: '/', queryParameters: {key: val});
         client.post(uri);
       }
     } else {
-      uri = rootUri.replace(path: '/', queryParameters: {sendMap['cmd'] : sendMap['value']});
+      uri = rootUri.replace(
+          path: '/', queryParameters: {sendMap['cmd']: sendMap['value']});
       client.post(uri);
     }
 
@@ -124,9 +124,18 @@ abstract class MamacDevice {
 }
 
 abstract class EnumHelper {
-  static const List<String> scheduleDays = const ['', 'Sunday', 'Monday',
-    'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Occupied',
-    'Unoccupied'];
+  static const List<String> scheduleDays = const [
+    '',
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Occupied',
+    'Unoccupied'
+  ];
   static const List<String> HeatCoolAuto = const ['', 'Heat', 'Cool', 'Auto'];
   static String get enumHeatCoolAuto =>
       'enum[${HeatCoolAuto.where((el) => el.isNotEmpty).join(',')}]';
@@ -138,7 +147,10 @@ abstract class EnumHelper {
   static String get enumAutoManual => 'enum[${AutoManual.join(',')}]';
   static const List<String> DisabledEnabled = const ['Disabled', 'Enabled'];
   static String get enumDisabledEnabled => 'enum[${DisabledEnabled.join(',')}]';
-  static const List<String> UnoccupiedOccupied = const ['Unoccupied', 'Occupied'];
+  static const List<String> UnoccupiedOccupied = const [
+    'Unoccupied',
+    'Occupied'
+  ];
   static String get enumUnoccupiedOccupied =>
       'enum[${UnoccupiedOccupied.join(',')}]';
   static const List<String> LogicOrAnd = const ['', 'OR', 'AND'];

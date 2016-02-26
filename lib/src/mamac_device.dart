@@ -12,12 +12,12 @@ export 'mamac_device_commands.dart';
 class MamacDeviceNode extends SimpleNode {
   static const String isType = 'mamacDeviceNode';
   static Map<String, dynamic> definition(Map params) => {
-    r'$is' : isType,
-    r'$$mm_ref' : params['refreshRate'],
-    r'$$mm_url' : params['address'],
-    r'$$mm_type': params['type'],
-    RemoveDevice.pathName : RemoveDevice.definition()
-  };
+        r'$is': isType,
+        r'$$mm_ref': params['refreshRate'],
+        r'$$mm_url': params['address'],
+        r'$$mm_type': params['type'],
+        RemoveDevice.pathName: RemoveDevice.definition()
+      };
 
   MamacDevice device;
   StreamSubscription _sub;
@@ -34,7 +34,6 @@ class MamacDeviceNode extends SimpleNode {
 
     device = new MamacDevice.fromType(devType, addr, refresh);
     _sub = device.onUpdate.listen(updateDevice);
-
   }
 
   void update(Map params) {
@@ -43,8 +42,8 @@ class MamacDeviceNode extends SimpleNode {
 
     var curType = getConfig(r'$$mm_type');
     if (curType != params['type']) {
-      device = new MamacDevice.fromType(params['type'], params['address'],
-          params['refreshRate']);
+      device = new MamacDevice.fromType(
+          params['type'], params['address'], params['refreshRate']);
       // TODO: Need to remove subnodes because they may not match the new type.
     }
   }
@@ -52,7 +51,6 @@ class MamacDeviceNode extends SimpleNode {
   void updateDevice(Map<String, dynamic> data) {
     void valueUpdate(Map<String, dynamic> map, String pth) {
       for (String key in map.keys) {
-
         var nd = provider.getNode('$pth/$key');
         if (map[key] is String) {
           if (nd == null) {
@@ -69,7 +67,6 @@ class MamacDeviceNode extends SimpleNode {
             valueUpdate(map[key], nd.path);
           }
         }
-
       }
     }
 
@@ -80,11 +77,11 @@ class MamacDeviceNode extends SimpleNode {
 class DeviceValue extends SimpleNode {
   static const String isType = 'deviceValue';
   static Map<String, dynamic> definition(value) => {
-    r'$is' : isType,
-    r'$type': 'string',
-    r'$writable' : 'write',
-    r'?value': value
-  };
+        r'$is': isType,
+        r'$type': 'string',
+        r'$writable': 'write',
+        r'?value': value
+      };
 
   MamacDevice _device;
 
