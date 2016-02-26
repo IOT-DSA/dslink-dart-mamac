@@ -16,120 +16,6 @@ class CF201 extends MamacDevice {
   Map<String, dynamic> definition(String nodeName, value) {
     var ret = DeviceValue.definition(value);
 
-    if (nodeName.startsWith('FreezerCompressor')) {
-      switch (nodeName) {
-        case 'FreezerCompressorValue':
-          ret['@cmdid'] = '${_idPrefix}03_00';
-          ret[r'$type'] = 'number';
-          ret[r'?value'] = num.parse(value);
-          break;
-        case 'FreezerCompressorRunTime':
-          ret['@cmdid'] = '${_idPrefix}03_30';
-          ret[r'$type'] = 'number';
-          ret[r'?value'] = num.parse(value);
-          break;
-        // Undocumented
-//        case 'FreezerCompressorAlert':
-//          ret['@cmdid'] = '${_idPrefix}03_20';
-//          ret[r'$type'] = 'number';
-//          ret[r'?value'] = num.parse(value);
-//          break;
-        default:
-          ret[r'$writable'] = 'never';
-          break;
-      }
-    } else if (nodeName.startsWith('FreezerDefrost')) {
-      switch (nodeName) {
-        case 'FreezerDefrostValue':
-          ret['@cmdid'] = '${_idPrefix}09_00';
-          ret[r'$type'] = 'number';
-          ret[r'?value'] = num.parse(value);
-          break;
-        // Undocumented
-//        case 'FreezerDefrostCycleDaily':
-//          ret['@cmdid'] = '${_idPrefix}09_31';
-//          break;
-        // Undocumented
-//        case 'FreezerDefrostAlert':
-//          ret['@cmdid'] = '${_idPrefix}09_20';
-//          break;
-        default:
-          ret[r'$writable'] = 'never';
-          break;
-      }
-    } else if (nodeName.startsWith('FreezerDoor')) {
-      switch (nodeName) {
-        case 'FreezerDoorValue':
-          ret[r'$type'] = 'number';
-          ret[r'?value'] = num.parse(value);
-          break;
-        // Undocumented
-//        case 'FreezerDoorCycleDaily':
-//          break;
-//        case 'FreezerDoorOpenTimeDaily':
-//          break;
-//        case 'FreezerDoorAlert':
-//          break;
-//        case 'FreezerDoorOpenAlert':
-//          break;
-        default:
-          ret[r'$writable'] = 'never';
-          break;
-      }
-    } else if (nodeName.startsWith('Freezer')) {
-      switch (nodeName) {
-        case 'FreezerValue':
-          ret['@cmdid'] = '${_idPrefix}01_00';
-          ret[r'$type'] = 'number';
-          ret[r'?value'] = num.parse(value);
-          break;
-        case 'FreezerUnits':
-          ret['@cmdid'] = '${_idPrefix}01_05';
-          ret[r'$type'] = 'enum[F,C]';
-          break;
-        // Undocumented
-//        case 'FreezerAlert':
-//          break;
-        default:
-          ret[r'$writable'] = 'never';
-          break;
-      }
-    } else if (nodeName.startsWith('CoolerCompressor')) {
-      switch (nodeName) {
-        case 'CoolerCompressorValue':
-          ret['@cmdid'] = '${_idPrefix}05_00';
-          ret[r'$type'] = 'number';
-          ret[r'?value'] = num.parse(value);
-          break;
-        // Undocumented
-//        case 'CoolerCompressorRunTime':
-//          break;
-      // Undocumented
-//        case 'CoolerCompressorAlert':
-//          break;
-        default:
-          ret[r'$writable'] = 'never';
-          break;
-      }
-      // Undocumented
-//    } else if (nodeName.startsWith('CoolerDoor')) {
-//      switch (nodeName) {
-//        case 'CoolerDoorValue':
-//          break;
-//        case 'CoolerDoorCycleDaily':
-//          break;
-//        case 'CoolerDoorOpenTimeDaily':
-//          break;
-//        case 'CoolerDoorAlert':
-//          break;
-//        case 'CoolerDoorOpenAlert':
-//          break;
-//        default:
-//          ret[r'$writable'] = 'never';
-//          break;
-//      }
-    }
-
     switch (nodeName) {
       case 'NodeID':
         ret['@cmdid'] = '${_idPrefix}00_00';
@@ -140,6 +26,14 @@ class CF201 extends MamacDevice {
       case 'CurrentDate':
         ret['@cmdid'] = '${_idPrefix}00_YY';
         ret[r'$editor'] = 'daterange';
+        break;
+      case 'FreezerUnits':
+        ret['@cmdid'] = '${_idPrefix}01_05';
+        ret[r'$type'] = 'enum[F,C]';
+        break;
+      case 'CoolerUnits':
+        ret['@cmdid'] = '${_idPrefix}01_05';
+        ret[r'$type'] = 'enum[F,C]';
         break;
       default:
         ret[r'$writable'] = 'never';
@@ -155,7 +49,38 @@ class CF201 extends MamacDevice {
     if (cmd == null) return null;
     var nodeName = node.name;
 
-
+    switch (nodeName) {
+      case 'CurrentTime':
+        ret['cmd'] = [
+          cmd.replaceFirst('YY', '22'),
+          cmd.replaceFirst('YY', '23'),
+          cmd.replaceFirst('YY', '24')
+        ];
+        ret['values'] = (value as String).split(':').toList();
+        break;
+      case 'CurrentDate':
+        var dates =
+            (value as String).split('/').map((el) => DateTime.parse(el));
+        ret['cmd'] = [
+          cmd.replaceFirst('YY', '25'),
+          cmd.replaceFirst('YY', '26'),
+          cmd.replaceFirst('YY', '27')
+        ];
+        ret['value'] = [dates[0].month, dates[0].day, (dates[0].year % 100)];
+        break;
+      case 'CoolerUnits':
+        ret['cmd'] = cmd;
+        ret['value'] = value == 'F' ? '1' : '2';
+        break;
+      case 'FreezerUnits':
+        ret['cmd'] = cmd;
+        ret['value'] = value == 'F' ? '1' : '2';
+        break;
+      default:
+        ret['cmd'] = cmd;
+        ret['value'] = value;
+        break;
+    }
 
     print(cmd);
     return ret;
