@@ -5,11 +5,11 @@ import 'dart:async';
 import 'package:xml/xml.dart' as xml;
 
 import 'mamac_client.dart';
+import 'mamac_device.dart';
+
 import 'devices/mt201.dart';
 import 'devices/mt101.dart';
-
-import 'mamac_device.dart';
-import 'package:dslink_mamac/src/devices/cf201.dart';
+import 'devices/cf201.dart';
 
 abstract class MamacDevice {
   final String address;
