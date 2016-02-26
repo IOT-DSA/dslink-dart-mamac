@@ -11,11 +11,9 @@ class MT101 extends MamacDevice {
 
   MT101(String address, int refreshRate) : super(address, refreshRate);
 
-  Map<String, dynamic> definition(String nodeName, value) {
-    return NodeParser.parseNode(nodeName, value);
-  }
+  Map<String, dynamic> definition(String nodeName, value) =>
+      NodeParser.parseNode(nodeName, value);
 
-  Map<String, dynamic> setValue(DeviceValue node, value) {
-    return NodeParser.buildSetCommand(node, value);
-  }
+  Map<String, dynamic> setValue(DeviceValue node, value) =>
+      NodeParser.buildSetCommand(node, value);
 }
