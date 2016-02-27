@@ -12,6 +12,8 @@ import 'devices/cl101.dart';
 import 'devices/mt205.dart';
 import 'devices/fz101.dart';
 import 'devices/lt201.dart';
+import 'devices/mt150.dart';
+import 'devices/sm101.dart';
 
 abstract class MamacDevice {
   final String address;
@@ -54,6 +56,10 @@ abstract class MamacDevice {
         return new FZ101(address, refreshRate);
       case LT201.type:
         return new LT201(address, refreshRate);
+      case MT150.type:
+        return new MT150(address, refreshRate);
+      case SM101.type:
+        return new MT150(address, refreshRate);
     }
   }
 
