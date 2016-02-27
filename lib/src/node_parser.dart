@@ -218,6 +218,40 @@ abstract class NodeParser {
           ret['@cmdid'] = '${_idPrefix}09_16';
           ret[r'$type'] = EnumHelper.enumAutoManual;
           break;
+        case 'ReversingValve':
+          ret['@cmdid'] = '${_idPrefix}70_46';
+          // TODO: Check what the correct value is
+          // The POST document says 1 = Heat, 2 = Cool
+          // but the ext xml file shows On/Off.
+          ret[r'$type'] = EnumHelper.enumOffOn;
+          break;
+        case 'AuxHeatValue':
+          ret['@cmdid'] = '${_idPrefix}08_00';
+          ret[r'$type'] = EnumHelper.enumOffOn;
+          break;
+        case 'AuxHeatControl':
+          ret['@cmdid'] = '${_idPrefix}08_16';
+          ret[r'$type'] = EnumHelper.enumAutoManual;
+          break;
+        case 'OutdoorTempLockoutEnabled':
+          ret['@cmdid'] = '${_idPrefix}70_40';
+          ret[r'$type'] = EnumHelper.enumDisabledEnabled;
+          break;
+        case 'OutdoorTempLockoutHeatSetpoint':
+          ret['@cmdid'] = '${_idPrefix}70_41';
+          ret[r'$type'] = 'number';
+          ret['?value'] = num.parse(value);
+         break;
+        case 'OutdoorTempLockoutCoolSetpoint':
+          ret['@cmdid'] = '${_idPrefix}70_42';
+          ret[r'$type'] = 'number';
+          ret['?value'] = num.parse(value);
+          break;
+        case 'OutdoorTempAuxHeatLockout':
+          ret['@cmdid'] = '${_idPrefix}70_44';
+          ret[r'$type'] = 'number';
+          ret['?value'] = num.parse(value);
+          break;
         // Schedules Special Days
         case 'StartDate':
         case 'EndDate':
@@ -423,6 +457,8 @@ abstract class NodeParser {
         case 'Heat2Value':
         case 'CoolValue':
         case 'Cool2Value':
+        case 'ReversingValve':
+        case 'AuxHeatValue':
           ret['cmd'] = cmd;
           ret['value'] = EnumHelper.OffOn.indexOf(value);
           break;
@@ -432,6 +468,7 @@ abstract class NodeParser {
         case 'CoolControl':
         case 'Cool2Control':
         case 'LightOutputControl':
+        case 'AuxHeatControl':
           ret['cmd'] = cmd;
           ret['value'] = EnumHelper.AutoManual.indexOf(value);
           break;
@@ -442,6 +479,7 @@ abstract class NodeParser {
           break;
         case 'AlertEnabled':
         case 'LoggingEnabled':
+        case 'OutdoorTempLockoutEnabled':
           ret['cmd'] = cmd;
           ret['value'] = EnumHelper.DisabledEnabled.indexOf(value);
           break;
