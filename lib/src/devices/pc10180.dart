@@ -13,6 +13,9 @@ class PC10180 extends MamacDevice {
   // The POST document doesn't fit with the xml file.
   PC10180(String address, int refreshRate) : super(address, refreshRate);
 
+  PC10180.fromParams(DeviceParams deviceParams)
+      : super(deviceParams.address, deviceParams.refreshRate);
+
   Map<String, dynamic> definition(String nodeName, value) =>
       NodeParser.parseNode(nodeName, value);
 

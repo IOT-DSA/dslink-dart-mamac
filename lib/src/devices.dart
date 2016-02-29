@@ -49,30 +49,30 @@ abstract class MamacDevice {
     update(null);
   }
 
-  factory MamacDevice.fromType(String type, String address, int refreshRate) {
-    switch (type) {
+  factory MamacDevice.fromParams(DeviceParams deviceParams) {
+    switch (deviceParams.type) {
       case MT201.type:
-        return new MT201(address, refreshRate);
+        return new MT201.fromParams(deviceParams);
       case MT101.type:
-        return new MT101(address, refreshRate);
+        return new MT101.fromParams(deviceParams);
       case CF201.type:
-        return new CF201(address, refreshRate);
+        return new CF201.fromParams(deviceParams);
       case CL101.type:
-        return new CL101(address, refreshRate);
+        return new CL101.fromParams(deviceParams);
       case MT205.type:
-        return new MT205(address, refreshRate);
+        return new MT205.fromParams(deviceParams);
       case FZ101.type:
-        return new FZ101(address, refreshRate);
+        return new FZ101.fromParams(deviceParams);
       case LT201.type:
-        return new LT201(address, refreshRate);
+        return new LT201.fromParams(deviceParams);
       case MT150.type:
-        return new MT150(address, refreshRate);
+        return new MT150.fromParams(deviceParams);
       case SM101.type:
-        return new SM101(address, refreshRate);
+        return new SM101.fromParams(deviceParams);
       case PC10144.type:
-        return new PC10144(address, refreshRate);
+        return new PC10144.fromParams(deviceParams);
       case PC10180.type:
-        return new PC10180(address, refreshRate);
+        return new PC10180.fromParams(deviceParams);
     }
   }
 
@@ -189,4 +189,12 @@ abstract class EnumHelper {
   static const List<String> LogicOrAnd = const ['', 'OR', 'AND'];
   static String get enumLogicOrAnd =>
       'enum[${LogicOrAnd.where((el) => el.isNotEmpty).join(',')}]';
+}
+
+class DeviceParams {
+  String type;
+  String address;
+  int refreshRate;
+  String username;
+  String password;
 }

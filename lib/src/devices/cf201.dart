@@ -11,6 +11,9 @@ class CF201 extends MamacDevice {
 
   CF201(String address, int refreshRate) : super(address, refreshRate);
 
+  CF201.fromParams(DeviceParams deviceParams)
+      : super(deviceParams.address, deviceParams.refreshRate);
+
   Map<String, dynamic> definition(String nodeName, value) =>
       NodeParser.parseNode(nodeName, value);
 

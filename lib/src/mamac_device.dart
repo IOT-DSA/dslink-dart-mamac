@@ -14,6 +14,8 @@ class MamacDeviceNode extends SimpleNode {
         r'$$mm_ref': params['refreshRate'],
         r'$$mm_url': params['address'],
         r'$$mm_type': params['type'],
+        r'$$mm_username': params['username'],
+        r'$$mm_password': params['password'],
         RemoveDevice.pathName: RemoveDevice.definition()
       };
 
@@ -25,23 +27,42 @@ class MamacDeviceNode extends SimpleNode {
   @override
   void onCreated() {
     var devType = getConfig(r'$$mm_type');
-    var addr = getConfig(r'$$mm_url');
+    var address = getConfig(r'$$mm_url');
     var refresh = getConfig(r'$$mm_ref');
+    var username = getConfig(r'$$mm_username');
+    var password = getConfig(r'$$mm_password');
 
-    print('Type: $devType, Address: $addr, Refresh: $refresh');
+    var deviceParams = new DeviceParams()
+      ..address = address
+      ..type = devType
+      ..refreshRate = refresh
+      ..username = username
+      ..password = password;
 
-    device = new MamacDevice.fromType(devType, addr, refresh);
+    print('Type: $devType, Address: $address, Refresh: $refresh');
+
+    device = new MamacDevice.fromParams(deviceParams);
     _sub = device.onUpdate.listen(updateDevice);
   }
 
   void update(Map params) {
     configs[r'$$mm_ref'] = params['refreshRate'];
     configs[r'$$mm_url'] = params['address'];
+    configs[r'$$mm_username'] = params['username'];
+    configs[r'$$mm_password'] = params['password'];
 
-    var curType = getConfig(r'$$mm_type');
-    if (curType != params['type']) {
-      device = new MamacDevice.fromType(
-          params['type'], params['address'], params['refreshRate']);
+    var currentType = getConfig(r'$$mm_type');
+    var newParams = new DeviceParams()
+      ..address = params['address']
+      ..refreshRate = params['refreshRate']
+      ..type = params['type']
+      ..username = params['username']
+      ..password = params['password'];
+
+    bool hasTypeChanged() => currentType != params['type'];
+
+    if (hasTypeChanged()) {
+      device = new MamacDevice.fromParams(newParams);
       // TODO: Need to remove subnodes because they may not match the new type.
     }
   }

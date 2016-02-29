@@ -11,6 +11,9 @@ class MT201 extends MamacDevice {
 
   MT201(String address, int refreshRate) : super(address, refreshRate);
 
+  MT201.fromParams(DeviceParams deviceParams)
+      : super(deviceParams.address, deviceParams.refreshRate);
+
   Map<String, dynamic> definition(String nodeName, value) =>
       NodeParser.parseNode(nodeName, value);
 

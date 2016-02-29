@@ -12,6 +12,9 @@ class SM101 extends MamacDevice {
   // TODO: Verify for this device -- the xml and post document don't make sense
   SM101(String address, int refreshRate) : super(address, refreshRate);
 
+  SM101.fromParams(DeviceParams deviceParams)
+      : super(deviceParams.address, deviceParams.refreshRate);
+
   Map<String, dynamic> definition(String nodeName, value) =>
       NodeParser.parseNode(nodeName, value);
 

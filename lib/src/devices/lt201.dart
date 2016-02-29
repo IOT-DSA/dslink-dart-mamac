@@ -11,6 +11,9 @@ class LT201 extends MamacDevice {
 
   LT201(String address, int refreshRate) : super(address, refreshRate);
 
+  LT201.fromParams(DeviceParams deviceParams)
+      : super(deviceParams.address, deviceParams.refreshRate);
+
   Map<String, dynamic> definition(String nodeName, value) =>
       NodeParser.parseNode(nodeName, value);
 

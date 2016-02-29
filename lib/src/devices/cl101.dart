@@ -11,6 +11,9 @@ class CL101 extends MamacDevice {
 
   CL101(String address, int refreshRate) : super(address, refreshRate);
 
+  CL101.fromParams(DeviceParams deviceParams)
+      : super(deviceParams.address, deviceParams.refreshRate);
+
   Map<String, dynamic> definition(String nodeName, value) =>
       NodeParser.parseNode(nodeName, value);
 
