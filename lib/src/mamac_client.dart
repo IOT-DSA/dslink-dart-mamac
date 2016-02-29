@@ -52,7 +52,14 @@ class MamacClient {
           req = await _client.postUrl(pr.uri);
           break;
       }
+
       resp = await req.close();
+      var statusCode = resp.statusCode;
+      if (statusCode == 404) {
+        throw new HttpException(
+            "Cannot reach the specified endpoint ${pr.uri.path}");
+      }
+
       data = await resp.transform(UTF8.decoder).join();
     } on HttpException catch (e) {
       logger.warning('Unable to connect to ${pr.uri}', e);

@@ -14,6 +14,8 @@ import 'devices/fz101.dart';
 import 'devices/lt201.dart';
 import 'devices/mt150.dart';
 import 'devices/sm101.dart';
+import 'devices/pc10144.dart';
+import 'devices/pc10180.dart';
 
 abstract class MamacDevice {
   final String address;
@@ -59,7 +61,11 @@ abstract class MamacDevice {
       case MT150.type:
         return new MT150(address, refreshRate);
       case SM101.type:
-        return new MT150(address, refreshRate);
+        return new SM101(address, refreshRate);
+      case PC10144.type:
+        return new PC10144(address, refreshRate);
+      case PC10180.type:
+        return new PC10180(address, refreshRate);
     }
   }
 
@@ -100,14 +106,19 @@ abstract class MamacDevice {
           ret[name].addAll(getData(sub));
         }
       } else {
-        ret[name] = el.firstChild.text;
+        ret[name] = el.children.isNotEmpty ? el.firstChild.text : '';
       }
       return ret;
     }
 
     Map<String, dynamic> ret = {};
 
-    var doc = xmlDoc.findElements('MaverickStat').first;
+    var root = xmlDoc.findElements('Maverick');
+    if (root.isEmpty) {
+      root = xmlDoc.findElements('MaverickStat');
+    }
+
+    var doc = root.first;
     for (var node in doc.children) {
       if (node is! xml.XmlElement) continue;
       ret.addAll(getData(node));
