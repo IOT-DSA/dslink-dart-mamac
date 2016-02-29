@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:xml/xml.dart' as xml;
+import 'package:http/http.dart' as http;
 
-import 'mamac_client.dart';
 import 'mamac_device.dart';
 
 import 'devices/mt201.dart';
@@ -20,12 +22,12 @@ import 'devices/pc10180.dart';
 abstract class MamacDevice {
   final String address;
   final int refreshRate;
+  final http.Client client;
 
   String get deviceType;
   String get fileName;
   Stream<Map<String, dynamic>> get onUpdate => _controller.stream;
 
-  final MamacClient client;
   Uri rootUri;
   bool pendingUpdate = false;
 
@@ -34,7 +36,9 @@ abstract class MamacDevice {
 
   xml.XmlDocument xmlDoc;
 
-  MamacDevice(this.address, this.refreshRate) : client = new MamacClient() {
+  MamacDevice(this.address, this.refreshRate)
+      : client =
+            new http.IOClient(new HttpClient()..maxConnectionsPerHost = 3) {
     rootUri = Uri.parse(address);
     _controller = new StreamController<Map<String, dynamic>>();
     _refreshTimer =
@@ -74,12 +78,9 @@ abstract class MamacDevice {
     pendingUpdate = true;
     var uri = rootUri.replace(path: fileName);
 
-    var doc = await client.get(uri);
-    if (doc == null) {
-      return;
-    }
+    var response = await client.get(uri);
 
-    xmlDoc = xml.parse(doc);
+    xmlDoc = xml.parse(response.body);
     var dataMap = processData();
     _controller.add(dataMap);
     pendingUpdate = false;
@@ -127,6 +128,10 @@ abstract class MamacDevice {
     return ret;
   }
 
+  // TODO: Add real user and password
+  Map _createBasicAuthHeaders() =>
+      {'authorization': BASE64.encode(UTF8.encode('user:password'))};
+
   bool onSetValue(DeviceValue node, value) {
     var oldValue = node.value;
     var sendMap = setValue(node, value);
@@ -138,12 +143,12 @@ abstract class MamacDevice {
         var key = sendMap['cmd'][i];
         var val = sendMap['value'][i];
         uri = rootUri.replace(path: '/', queryParameters: {key: val});
-        client.post(uri);
+        client.post(uri, headers: _createBasicAuthHeaders());
       }
     } else {
       uri = rootUri.replace(
           path: '/', queryParameters: {sendMap['cmd']: sendMap['value']});
-      client.post(uri);
+      client.post(uri, headers: _createBasicAuthHeaders());
     }
 
     return false;
