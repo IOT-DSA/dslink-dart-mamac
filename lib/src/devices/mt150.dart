@@ -7,6 +7,6 @@ class MT150 extends MamacDevice {
   String get deviceType => type;
   String get fileName => xmlFile;
 
-  MT150.fromParams(DeviceParams deviceParams)
+  MT150(DeviceParams deviceParams)
       : super(deviceParams);
 }

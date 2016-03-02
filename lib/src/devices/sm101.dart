@@ -8,6 +8,6 @@ class SM101 extends MamacDevice {
   String get fileName => xmlFile;
 
   // TODO: Verify for this device -- the xml and post document don't make sense
-  SM101.fromParams(DeviceParams deviceParams)
+  SM101(DeviceParams deviceParams)
       : super(deviceParams);
 }

@@ -9,6 +9,6 @@ class PC10144 extends MamacDevice {
 
   // TODO: Check for this device
   // The POST document doesn't fit with the xml file.
-  PC10144.fromParams(DeviceParams deviceParams)
+  PC10144(DeviceParams deviceParams)
       : super(deviceParams);
 }

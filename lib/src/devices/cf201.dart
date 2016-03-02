@@ -7,6 +7,6 @@ class CF201 extends MamacDevice {
   String get deviceType => type;
   String get fileName => xmlFile;
 
-  CF201.fromParams(DeviceParams deviceParams)
+  CF201(DeviceParams deviceParams)
       : super(deviceParams);
 }

@@ -7,6 +7,6 @@ class CL101 extends MamacDevice {
   String get deviceType => type;
   String get fileName => xmlFile;
 
-  CL101.fromParams(DeviceParams deviceParams)
+  CL101(DeviceParams deviceParams)
       : super(deviceParams);
 }

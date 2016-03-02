@@ -55,27 +55,27 @@ abstract class MamacDevice {
   factory MamacDevice.fromParams(DeviceParams deviceParams) {
     switch (deviceParams.type) {
       case MT201.type:
-        return new MT201.fromParams(deviceParams);
+        return new MT201(deviceParams);
       case MT101.type:
-        return new MT101.fromParams(deviceParams);
+        return new MT101(deviceParams);
       case CF201.type:
-        return new CF201.fromParams(deviceParams);
+        return new CF201(deviceParams);
       case CL101.type:
-        return new CL101.fromParams(deviceParams);
+        return new CL101(deviceParams);
       case MT205.type:
-        return new MT205.fromParams(deviceParams);
+        return new MT205(deviceParams);
       case FZ101.type:
-        return new FZ101.fromParams(deviceParams);
+        return new FZ101(deviceParams);
       case LT201.type:
-        return new LT201.fromParams(deviceParams);
+        return new LT201(deviceParams);
       case MT150.type:
-        return new MT150.fromParams(deviceParams);
+        return new MT150(deviceParams);
       case SM101.type:
-        return new SM101.fromParams(deviceParams);
+        return new SM101(deviceParams);
       case PC10144.type:
-        return new PC10144.fromParams(deviceParams);
+        return new PC10144(deviceParams);
       case PC10180.type:
-        return new PC10180.fromParams(deviceParams);
+        return new PC10180(deviceParams);
     }
   }
 
