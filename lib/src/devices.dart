@@ -191,6 +191,16 @@ abstract class EnumHelper {
       'enum[${LogicOrAnd.where((el) => el.isNotEmpty).join(',')}]';
 }
 
+class ParamConstants {
+  static const String type = 'type';
+  static const String address = 'address';
+  static const String refreshRate = 'refreshRate';
+  static const String username = 'username';
+  static const String password = 'password';
+
+  static String wrapParam(String param) => r'$$mm_' + param;
+}
+
 class DeviceParams {
   String type;
   String address;
