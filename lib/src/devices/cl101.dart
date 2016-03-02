@@ -9,14 +9,6 @@ class CL101 extends MamacDevice {
   String get deviceType => type;
   String get fileName => xmlFile;
 
-  CL101(String address, int refreshRate) : super(address, refreshRate);
-
   CL101.fromParams(DeviceParams deviceParams)
       : super(deviceParams.address, deviceParams.refreshRate);
-
-  Map<String, dynamic> definition(String nodeName, value) =>
-      NodeParser.parseNode(nodeName, value);
-
-  Map<String, dynamic> setValue(DeviceValue node, value) =>
-      NodeParser.buildSetCommand(node, value);
 }

@@ -11,14 +11,6 @@ class PC10144 extends MamacDevice {
 
   // TODO: Check for this device
   // The POST document doesn't fit with the xml file.
-  PC10144(String address, int refreshRate) : super(address, refreshRate);
-
   PC10144.fromParams(DeviceParams deviceParams)
       : super(deviceParams.address, deviceParams.refreshRate);
-
-  Map<String, dynamic> definition(String nodeName, value) =>
-      NodeParser.parseNode(nodeName, value);
-
-  Map<String, dynamic> setValue(DeviceValue node, value) =>
-      NodeParser.buildSetCommand(node, value);
 }

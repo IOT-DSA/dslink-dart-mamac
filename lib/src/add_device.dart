@@ -29,7 +29,11 @@ class AddDevice extends SimpleNode {
             'type':
                 'enum[cf101,cf201,fz101,lt201,mt101,mt150,mt201,mt205,pc10144,pc10180,sm101]'
           },
-          {'name': ParamConstants.refreshRate, 'type': 'number', 'default': 30},
+          {
+            'name': ParamConstants.refreshRate,
+            'type': 'number',
+            'default': 30,
+          },
           {
             'name': ParamConstants.username,
             'type': 'string',

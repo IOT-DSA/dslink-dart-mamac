@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:xml/xml.dart' as xml;
 import 'package:http/http.dart' as http;
 
+import 'node_parser.dart';
 import 'mamac_device.dart';
 
 import 'devices/mt201.dart';
@@ -152,8 +153,12 @@ abstract class MamacDevice {
     return false;
   }
 
-  Map<String, dynamic> definition(String nodeName, value);
-  Map<String, dynamic> setValue(node, value);
+
+  Map<String, dynamic> definition(String nodeName, value) =>
+      NodeParser.parseNode(nodeName, value);
+
+  Map<String, dynamic> setValue(DeviceValue node, value) =>
+      NodeParser.buildSetCommand(node, value);
 }
 
 abstract class EnumHelper {

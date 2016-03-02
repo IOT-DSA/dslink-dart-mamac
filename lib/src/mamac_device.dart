@@ -33,6 +33,10 @@ class MamacDeviceNode extends SimpleNode {
     var username = getConfig(wrap(ParamConstants.username));
     var password = getConfig(wrap(ParamConstants.password));
 
+    if (refresh is double) {
+      refresh = refresh.round();
+    }
+
     var deviceParams = new DeviceParams()
       ..address = address
       ..type = devType
