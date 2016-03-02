@@ -1,5 +1,3 @@
-library dslink.mamac.nodes.device.commands;
-
 import 'package:dslink/dslink.dart';
 
 import 'mamac_device.dart';

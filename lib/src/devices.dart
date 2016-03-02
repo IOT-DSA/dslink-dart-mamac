@@ -1,15 +1,22 @@
-library dslink.mamac.devices;
-
 import 'dart:async';
+import 'dart:io';
 
 import 'package:xml/xml.dart' as xml;
+import 'package:http/http.dart' as http;
 
-import 'mamac_client.dart';
 import 'mamac_device.dart';
 
 import 'devices/mt201.dart';
 import 'devices/mt101.dart';
 import 'devices/cf201.dart';
+import 'devices/cl101.dart';
+import 'devices/mt205.dart';
+import 'devices/fz101.dart';
+import 'devices/lt201.dart';
+import 'devices/mt150.dart';
+import 'devices/sm101.dart';
+import 'devices/pc10144.dart';
+import 'devices/pc10180.dart';
 
 abstract class MamacDevice {
   final String address;
@@ -19,20 +26,26 @@ abstract class MamacDevice {
   String get fileName;
   Stream<Map<String, dynamic>> get onUpdate => _controller.stream;
 
-  final MamacClient client;
   Uri rootUri;
   bool pendingUpdate = false;
 
   StreamController<Map<String, dynamic>> _controller;
-  Timer _refreshTimer;
+  http.Client _client;
 
   xml.XmlDocument xmlDoc;
 
-  MamacDevice(this.address, this.refreshRate) : client = new MamacClient() {
+  MamacDevice(this.address, this.refreshRate) {
+    var innerClient = new HttpClient()..maxConnectionsPerHost = 3;
+    innerClient.authenticate = (Uri uri, String scheme, String realm) {
+      innerClient.addCredentials(
+          uri, realm, new HttpClientBasicCredentials('username', 'password'));
+      return true;
+    };
+
+    _client = new http.IOClient(innerClient);
     rootUri = Uri.parse(address);
     _controller = new StreamController<Map<String, dynamic>>();
-    _refreshTimer =
-        new Timer.periodic(new Duration(seconds: refreshRate), update);
+    new Timer.periodic(new Duration(seconds: refreshRate), update);
     update(null);
   }
 
@@ -44,6 +57,22 @@ abstract class MamacDevice {
         return new MT101(address, refreshRate);
       case CF201.type:
         return new CF201(address, refreshRate);
+      case CL101.type:
+        return new CL101(address, refreshRate);
+      case MT205.type:
+        return new MT205(address, refreshRate);
+      case FZ101.type:
+        return new FZ101(address, refreshRate);
+      case LT201.type:
+        return new LT201(address, refreshRate);
+      case MT150.type:
+        return new MT150(address, refreshRate);
+      case SM101.type:
+        return new SM101(address, refreshRate);
+      case PC10144.type:
+        return new PC10144(address, refreshRate);
+      case PC10180.type:
+        return new PC10180(address, refreshRate);
     }
   }
 
@@ -52,12 +81,9 @@ abstract class MamacDevice {
     pendingUpdate = true;
     var uri = rootUri.replace(path: fileName);
 
-    var doc = await client.get(uri);
-    if (doc == null) {
-      return;
-    }
+    var response = await _client.get(uri);
 
-    xmlDoc = xml.parse(doc);
+    xmlDoc = xml.parse(response.body);
     var dataMap = processData();
     _controller.add(dataMap);
     pendingUpdate = false;
@@ -84,14 +110,19 @@ abstract class MamacDevice {
           ret[name].addAll(getData(sub));
         }
       } else {
-        ret[name] = el.firstChild.text;
+        ret[name] = el.children.isNotEmpty ? el.firstChild.text : '';
       }
       return ret;
     }
 
     Map<String, dynamic> ret = {};
 
-    var doc = xmlDoc.findElements('MaverickStat').first;
+    var root = xmlDoc.findElements('Maverick');
+    if (root.isEmpty) {
+      root = xmlDoc.findElements('MaverickStat');
+    }
+
+    var doc = root.first;
     for (var node in doc.children) {
       if (node is! xml.XmlElement) continue;
       ret.addAll(getData(node));
@@ -101,7 +132,6 @@ abstract class MamacDevice {
   }
 
   bool onSetValue(DeviceValue node, value) {
-    var oldValue = node.value;
     var sendMap = setValue(node, value);
     if (sendMap == null || sendMap['cmd'] == null) return true;
 
@@ -111,12 +141,12 @@ abstract class MamacDevice {
         var key = sendMap['cmd'][i];
         var val = sendMap['value'][i];
         uri = rootUri.replace(path: '/', queryParameters: {key: val});
-        client.post(uri);
+        _client.post(uri);
       }
     } else {
       uri = rootUri.replace(
           path: '/', queryParameters: {sendMap['cmd']: sendMap['value']});
-      client.post(uri);
+      _client.post(uri);
     }
 
     return false;
