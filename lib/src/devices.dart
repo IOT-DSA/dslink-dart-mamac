@@ -1,8 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:xml/xml.dart' as xml;
+import 'package:http/http.dart' as http;
 
-import 'mamac_client.dart';
 import 'mamac_device.dart';
 
 import 'devices/mt201.dart';
@@ -25,20 +26,26 @@ abstract class MamacDevice {
   String get fileName;
   Stream<Map<String, dynamic>> get onUpdate => _controller.stream;
 
-  final MamacClient client;
   Uri rootUri;
   bool pendingUpdate = false;
 
   StreamController<Map<String, dynamic>> _controller;
-  Timer _refreshTimer;
+  http.Client _client;
 
   xml.XmlDocument xmlDoc;
 
-  MamacDevice(this.address, this.refreshRate) : client = new MamacClient() {
+  MamacDevice(this.address, this.refreshRate) {
+    var innerClient = new HttpClient()..maxConnectionsPerHost = 3;
+    innerClient.authenticate = (Uri uri, String scheme, String realm) {
+      innerClient.addCredentials(
+          uri, realm, new HttpClientBasicCredentials('username', 'password'));
+      return true;
+    };
+
+    _client = new http.IOClient(innerClient);
     rootUri = Uri.parse(address);
     _controller = new StreamController<Map<String, dynamic>>();
-    _refreshTimer =
-        new Timer.periodic(new Duration(seconds: refreshRate), update);
+    new Timer.periodic(new Duration(seconds: refreshRate), update);
     update(null);
   }
 
@@ -74,12 +81,9 @@ abstract class MamacDevice {
     pendingUpdate = true;
     var uri = rootUri.replace(path: fileName);
 
-    var doc = await client.get(uri);
-    if (doc == null) {
-      return;
-    }
+    var response = await _client.get(uri);
 
-    xmlDoc = xml.parse(doc);
+    xmlDoc = xml.parse(response.body);
     var dataMap = processData();
     _controller.add(dataMap);
     pendingUpdate = false;
@@ -128,7 +132,6 @@ abstract class MamacDevice {
   }
 
   bool onSetValue(DeviceValue node, value) {
-    var oldValue = node.value;
     var sendMap = setValue(node, value);
     if (sendMap == null || sendMap['cmd'] == null) return true;
 
@@ -138,12 +141,12 @@ abstract class MamacDevice {
         var key = sendMap['cmd'][i];
         var val = sendMap['value'][i];
         uri = rootUri.replace(path: '/', queryParameters: {key: val});
-        client.post(uri);
+        _client.post(uri);
       }
     } else {
       uri = rootUri.replace(
           path: '/', queryParameters: {sendMap['cmd']: sendMap['value']});
-      client.post(uri);
+      _client.post(uri);
     }
 
     return false;
