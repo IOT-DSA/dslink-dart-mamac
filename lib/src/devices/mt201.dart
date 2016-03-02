@@ -1,6 +1,4 @@
-import '../mamac_device.dart';
 import '../devices.dart';
-import '../node_parser.dart';
 
 class MT201 extends MamacDevice {
   static const String type = 'mt201';
@@ -9,11 +7,6 @@ class MT201 extends MamacDevice {
   String get deviceType => type;
   String get fileName => xmlFile;
 
-  MT201(String address, int refreshRate) : super(address, refreshRate);
-
-  Map<String, dynamic> definition(String nodeName, value) =>
-      NodeParser.parseNode(nodeName, value);
-
-  Map<String, dynamic> setValue(DeviceValue node, value) =>
-      NodeParser.buildSetCommand(node, value);
+  MT201(DeviceParams deviceParams)
+      : super(deviceParams);
 }

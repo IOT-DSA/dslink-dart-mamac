@@ -11,12 +11,15 @@ class MamacDeviceNode extends SimpleNode {
   static const String isType = 'mamacDeviceNode';
   static Map<String, dynamic> definition(Map params) => {
         r'$is': isType,
-        r'$$mm_ref': params['refreshRate'],
-        r'$$mm_url': params['address'],
-        r'$$mm_type': params['type'],
+        wrap(ParamConstants.refreshRate): params[ParamConstants.refreshRate],
+        wrap(ParamConstants.address): params[ParamConstants.address],
+        wrap(ParamConstants.type): params[ParamConstants.type],
+        wrap(ParamConstants.username): params[ParamConstants.username],
+        wrap(ParamConstants.password): params[ParamConstants.password],
         RemoveDevice.pathName: RemoveDevice.definition()
       };
 
+  static String wrap(String paramName) => ParamConstants.wrapParam(paramName);
   MamacDevice device;
   StreamSubscription _sub;
 
@@ -24,24 +27,48 @@ class MamacDeviceNode extends SimpleNode {
 
   @override
   void onCreated() {
-    var devType = getConfig(r'$$mm_type');
-    var addr = getConfig(r'$$mm_url');
-    var refresh = getConfig(r'$$mm_ref');
+    var devType = getConfig(wrap(ParamConstants.type));
+    var address = getConfig(wrap(ParamConstants.address));
+    var refresh = getConfig(wrap(ParamConstants.refreshRate));
+    var username = getConfig(wrap(ParamConstants.username));
+    var password = getConfig(wrap(ParamConstants.password));
 
-    print('Type: $devType, Address: $addr, Refresh: $refresh');
+    if (refresh is double) {
+      refresh = refresh.round();
+    }
 
-    device = new MamacDevice.fromType(devType, addr, refresh);
+    var deviceParams = new DeviceParams()
+      ..address = address
+      ..type = devType
+      ..refreshRate = refresh
+      ..username = username
+      ..password = password;
+
+    print('Type: $devType, Address: $address, Refresh: $refresh');
+
+    device = new MamacDevice.fromParams(deviceParams);
     _sub = device.onUpdate.listen(updateDevice);
   }
 
   void update(Map params) {
-    configs[r'$$mm_ref'] = params['refreshRate'];
-    configs[r'$$mm_url'] = params['address'];
+    configs[wrap(ParamConstants.refreshRate)] =
+        params[ParamConstants.refreshRate];
+    configs[wrap(ParamConstants.address)] = params[ParamConstants.address];
+    configs[wrap(ParamConstants.username)] = params[ParamConstants.username];
+    configs[wrap(ParamConstants.password)] = params[ParamConstants.password];
 
-    var curType = getConfig(r'$$mm_type');
-    if (curType != params['type']) {
-      device = new MamacDevice.fromType(
-          params['type'], params['address'], params['refreshRate']);
+    var currentType = getConfig(wrap(ParamConstants.type));
+    var newParams = new DeviceParams()
+      ..address = params[ParamConstants.address]
+      ..refreshRate = params[ParamConstants.refreshRate]
+      ..type = params[ParamConstants.type]
+      ..username = params[ParamConstants.username]
+      ..password = params[ParamConstants.password];
+
+    bool hasTypeChanged() => currentType != params[ParamConstants.type];
+
+    if (hasTypeChanged()) {
+      device = new MamacDevice.fromParams(newParams);
       // TODO: Need to remove subnodes because they may not match the new type.
     }
   }

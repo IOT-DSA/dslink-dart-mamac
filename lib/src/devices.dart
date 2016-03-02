@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:xml/xml.dart' as xml;
 import 'package:http/http.dart' as http;
 
+import 'node_parser.dart';
 import 'mamac_device.dart';
 
 import 'devices/mt201.dart';
@@ -19,8 +20,7 @@ import 'devices/pc10144.dart';
 import 'devices/pc10180.dart';
 
 abstract class MamacDevice {
-  final String address;
-  final int refreshRate;
+  final DeviceParams deviceParams;
 
   String get deviceType;
   String get fileName;
@@ -34,45 +34,48 @@ abstract class MamacDevice {
 
   xml.XmlDocument xmlDoc;
 
-  MamacDevice(this.address, this.refreshRate) {
+  MamacDevice(this.deviceParams) {
     var innerClient = new HttpClient()..maxConnectionsPerHost = 3;
     innerClient.authenticate = (Uri uri, String scheme, String realm) {
       innerClient.addCredentials(
-          uri, realm, new HttpClientBasicCredentials('username', 'password'));
+          uri,
+          realm,
+          new HttpClientBasicCredentials(
+              deviceParams.username, deviceParams.password));
       return true;
     };
 
     _client = new http.IOClient(innerClient);
-    rootUri = Uri.parse(address);
+    rootUri = Uri.parse(deviceParams.address);
     _controller = new StreamController<Map<String, dynamic>>();
-    new Timer.periodic(new Duration(seconds: refreshRate), update);
+    new Timer.periodic(new Duration(seconds: deviceParams.refreshRate), update);
     update(null);
   }
 
-  factory MamacDevice.fromType(String type, String address, int refreshRate) {
-    switch (type) {
+  factory MamacDevice.fromParams(DeviceParams deviceParams) {
+    switch (deviceParams.type) {
       case MT201.type:
-        return new MT201(address, refreshRate);
+        return new MT201(deviceParams);
       case MT101.type:
-        return new MT101(address, refreshRate);
+        return new MT101(deviceParams);
       case CF201.type:
-        return new CF201(address, refreshRate);
+        return new CF201(deviceParams);
       case CL101.type:
-        return new CL101(address, refreshRate);
+        return new CL101(deviceParams);
       case MT205.type:
-        return new MT205(address, refreshRate);
+        return new MT205(deviceParams);
       case FZ101.type:
-        return new FZ101(address, refreshRate);
+        return new FZ101(deviceParams);
       case LT201.type:
-        return new LT201(address, refreshRate);
+        return new LT201(deviceParams);
       case MT150.type:
-        return new MT150(address, refreshRate);
+        return new MT150(deviceParams);
       case SM101.type:
-        return new SM101(address, refreshRate);
+        return new SM101(deviceParams);
       case PC10144.type:
-        return new PC10144(address, refreshRate);
+        return new PC10144(deviceParams);
       case PC10180.type:
-        return new PC10180(address, refreshRate);
+        return new PC10180(deviceParams);
     }
   }
 
@@ -152,8 +155,11 @@ abstract class MamacDevice {
     return false;
   }
 
-  Map<String, dynamic> definition(String nodeName, value);
-  Map<String, dynamic> setValue(node, value);
+  Map<String, dynamic> definition(String nodeName, value) =>
+      NodeParser.parseNode(nodeName, value);
+
+  Map<String, dynamic> setValue(DeviceValue node, value) =>
+      NodeParser.buildSetCommand(node, value);
 }
 
 abstract class EnumHelper {
@@ -189,4 +195,24 @@ abstract class EnumHelper {
   static const List<String> LogicOrAnd = const ['', 'OR', 'AND'];
   static String get enumLogicOrAnd =>
       'enum[${LogicOrAnd.where((el) => el.isNotEmpty).join(',')}]';
+}
+
+class ParamConstants {
+  static const String type = 'type';
+  static const String address = 'address';
+  static const String refreshRate = 'refreshRate';
+  static const String username = 'username';
+  static const String password = 'password';
+  static const String name = 'name';
+
+  static String wrapParam(String param) => r'$$mm_' + param;
+}
+
+class DeviceParams {
+  String type;
+  String address;
+  int refreshRate;
+  String username;
+  String password;
+  String name;
 }

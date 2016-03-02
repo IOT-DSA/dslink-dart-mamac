@@ -1,6 +1,4 @@
-import '../mamac_device.dart';
 import '../devices.dart';
-import '../node_parser.dart';
 
 class SM101 extends MamacDevice {
   static const String type = 'sm101';
@@ -10,11 +8,6 @@ class SM101 extends MamacDevice {
   String get fileName => xmlFile;
 
   // TODO: Verify for this device -- the xml and post document don't make sense
-  SM101(String address, int refreshRate) : super(address, refreshRate);
-
-  Map<String, dynamic> definition(String nodeName, value) =>
-      NodeParser.parseNode(nodeName, value);
-
-  Map<String, dynamic> setValue(DeviceValue node, value) =>
-      NodeParser.buildSetCommand(node, value);
+  SM101(DeviceParams deviceParams)
+      : super(deviceParams);
 }
