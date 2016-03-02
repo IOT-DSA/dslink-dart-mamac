@@ -1,6 +1,4 @@
-import '../mamac_device.dart';
 import '../devices.dart';
-import '../node_parser.dart';
 
 class MT150 extends MamacDevice {
   static const String type = 'mt150';
@@ -10,5 +8,5 @@ class MT150 extends MamacDevice {
   String get fileName => xmlFile;
 
   MT150.fromParams(DeviceParams deviceParams)
-      : super(deviceParams.address, deviceParams.refreshRate);
+      : super(deviceParams);
 }

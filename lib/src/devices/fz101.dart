@@ -1,6 +1,4 @@
-import '../mamac_device.dart';
 import '../devices.dart';
-import '../node_parser.dart';
 
 class FZ101 extends MamacDevice {
   static const String type = 'fz101';
@@ -10,5 +8,5 @@ class FZ101 extends MamacDevice {
   String get fileName => xmlFile;
 
   FZ101.fromParams(DeviceParams deviceParams)
-      : super(deviceParams.address, deviceParams.refreshRate);
+      : super(deviceParams);
 }

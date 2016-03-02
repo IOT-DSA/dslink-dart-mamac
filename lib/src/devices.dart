@@ -20,8 +20,7 @@ import 'devices/pc10144.dart';
 import 'devices/pc10180.dart';
 
 abstract class MamacDevice {
-  final String address;
-  final int refreshRate;
+  DeviceParams deviceParams;
 
   String get deviceType;
   String get fileName;
@@ -35,18 +34,21 @@ abstract class MamacDevice {
 
   xml.XmlDocument xmlDoc;
 
-  MamacDevice(this.address, this.refreshRate) {
+  MamacDevice(this.deviceParams) {
     var innerClient = new HttpClient()..maxConnectionsPerHost = 3;
     innerClient.authenticate = (Uri uri, String scheme, String realm) {
       innerClient.addCredentials(
-          uri, realm, new HttpClientBasicCredentials('username', 'password'));
+          uri,
+          realm,
+          new HttpClientBasicCredentials(
+              deviceParams.username, deviceParams.password));
       return true;
     };
 
     _client = new http.IOClient(innerClient);
-    rootUri = Uri.parse(address);
+    rootUri = Uri.parse(deviceParams.address);
     _controller = new StreamController<Map<String, dynamic>>();
-    new Timer.periodic(new Duration(seconds: refreshRate), update);
+    new Timer.periodic(new Duration(seconds: deviceParams.refreshRate), update);
     update(null);
   }
 
@@ -152,7 +154,6 @@ abstract class MamacDevice {
 
     return false;
   }
-
 
   Map<String, dynamic> definition(String nodeName, value) =>
       NodeParser.parseNode(nodeName, value);

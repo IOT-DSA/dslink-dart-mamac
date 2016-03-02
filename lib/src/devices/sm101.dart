@@ -1,6 +1,4 @@
-import '../mamac_device.dart';
 import '../devices.dart';
-import '../node_parser.dart';
 
 class SM101 extends MamacDevice {
   static const String type = 'sm101';
@@ -11,5 +9,5 @@ class SM101 extends MamacDevice {
 
   // TODO: Verify for this device -- the xml and post document don't make sense
   SM101.fromParams(DeviceParams deviceParams)
-      : super(deviceParams.address, deviceParams.refreshRate);
+      : super(deviceParams);
 }
