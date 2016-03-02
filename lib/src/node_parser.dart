@@ -14,17 +14,29 @@ abstract class NodeParser {
     'OvernightHeat',
     'OvernightCool'
   ];
+
   static const List<String> scheduleFan = const [
     'MorningFan',
     'DaytimeFan',
     'EveningFan',
     'OvernightFan'
   ];
+
   static const List<String> scheduleStartEnd = const [
     'MorningStart',
     'DaytimeStart',
     'EveningStart',
     'OvernightStart'
+  ];
+
+  static const List<String> weekDays = const [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday'
   ];
 
   static Map<String, dynamic> parseNode(String nodeName, dynamic value) {
@@ -47,6 +59,31 @@ abstract class NodeParser {
       ret[r'?value'] = EnumHelper.AutoOn[int.parse(value)];
     } else if ((ind = scheduleStartEnd.indexOf(nodeName)) != -1) {
       ret['@cmdid'] = '${_idPrefix}2X_YY';
+    } else if (weekDays.any((String day) => nodeName.startsWith('${day}_'))) {
+      var parts = nodeName.split('_');
+      var enabled = parts[1];
+      var start = parts[2];
+      var stop = parts[3];
+      ret = <String, dynamic>{
+        'enabled': {
+          r'$is': DeviceValue.isType,
+          r'$type': 'enum[enabled,disabled]',
+          r'$writable': 'write',
+          r'?value': enabled,
+        },
+        'start': {
+          r'$is': DeviceValue.isType,
+          r'$type': 'string',
+          r'$writable': 'write',
+          r'?value': start,
+        },
+        'stop': {
+          r'$is': DeviceValue.isType,
+          r'$type': 'string',
+          r'$writable': 'write',
+          r'?value': stop,
+        }
+      };
     } else {
       switch (nodeName) {
         case 'NodeID':
