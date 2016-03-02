@@ -241,7 +241,7 @@ abstract class NodeParser {
           ret['@cmdid'] = '${_idPrefix}70_41';
           ret[r'$type'] = 'number';
           ret['?value'] = num.parse(value);
-         break;
+          break;
         case 'OutdoorTempLockoutCoolSetpoint':
           ret['@cmdid'] = '${_idPrefix}70_42';
           ret[r'$type'] = 'number';

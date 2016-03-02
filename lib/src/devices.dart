@@ -20,7 +20,7 @@ import 'devices/pc10144.dart';
 import 'devices/pc10180.dart';
 
 abstract class MamacDevice {
-  DeviceParams deviceParams;
+  final DeviceParams deviceParams;
 
   String get deviceType;
   String get fileName;
