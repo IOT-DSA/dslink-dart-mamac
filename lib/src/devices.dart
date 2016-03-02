@@ -197,6 +197,7 @@ class ParamConstants {
   static const String refreshRate = 'refreshRate';
   static const String username = 'username';
   static const String password = 'password';
+  static const String name = 'name';
 
   static String wrapParam(String param) => r'$$mm_' + param;
 }
@@ -207,4 +208,5 @@ class DeviceParams {
   int refreshRate;
   String username;
   String password;
+  String name;
 }

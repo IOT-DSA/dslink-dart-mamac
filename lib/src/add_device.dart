@@ -4,6 +4,7 @@ import 'package:dslink/dslink.dart';
 import 'package:dslink/nodes.dart';
 
 import 'mamac_device.dart';
+import 'devices.dart';
 
 class AddDevice extends SimpleNode {
   static const String isType = 'addDeviceNode';
@@ -13,20 +14,28 @@ class AddDevice extends SimpleNode {
         r'$name': 'Add Device',
         r'$invokable': 'write',
         r'$params': [
-          {'name': 'name', 'type': 'string', 'placeholder': 'Device Name'},
           {
-            'name': 'address',
+            'name': ParamConstants.name,
+            'type': 'string',
+            'placeholder': 'Device Name'
+          },
+          {
+            'name': ParamConstants.address,
             'type': 'string',
             'placeholder': 'http://device.address.com'
           },
           {
-            'name': 'type',
+            'name': ParamConstants.type,
             'type':
                 'enum[cf101,cf201,fz101,lt201,mt101,mt150,mt201,mt205,pc10144,pc10180,sm101]'
           },
-          {'name': 'refreshRate', 'type': 'number', 'default': 30},
-          {'name': 'username', 'type': 'string', 'placeholder': 'Username'},
-          {'name': 'password', 'type': 'password'},
+          {'name': ParamConstants.refreshRate, 'type': 'number', 'default': 30},
+          {
+            'name': ParamConstants.username,
+            'type': 'string',
+            'placeholder': 'Username'
+          },
+          {'name': ParamConstants.password, 'type': 'password'},
         ],
         r'$columns': [
           {'name': 'success', 'type': 'bool', 'default': false},
