@@ -12,10 +12,12 @@ class DeviceTypeDetector {
       var content = response.body;
 
       if (content.contains(deviceType)) {
+        client.close();
         return deviceType;
       }
     }
 
+    client.close();
     throw new Exception('Cannot detect device type');
   }
 }
