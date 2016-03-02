@@ -19,6 +19,31 @@ import 'devices/sm101.dart';
 import 'devices/pc10144.dart';
 import 'devices/pc10180.dart';
 
+export 'devices/mt201.dart';
+export 'devices/mt101.dart';
+export 'devices/cl101.dart';
+export 'devices/fz101.dart';
+export 'devices/lt201.dart';
+export 'devices/mt150.dart';
+export 'devices/mt205.dart';
+export 'devices/pc10144.dart';
+export 'devices/pc10180.dart';
+export 'devices/sm101.dart';
+
+List<String> deviceTypes = [
+  MT101.type,
+  CF201.type,
+  CL101.type,
+  FZ101.type,
+  LT201.type,
+  MT150.type,
+  MT201.type,
+  MT205.type,
+  PC10144.type,
+  PC10180.type,
+  SM101.type
+];
+
 abstract class MamacDevice {
   final DeviceParams deviceParams;
 
