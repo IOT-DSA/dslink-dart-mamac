@@ -3,10 +3,11 @@ import 'dart:async';
 import 'devices.dart';
 
 class DeviceTypeDetector {
-  final Client client = new Client();
+  Client client;
   static const String pageToCrawl = 'start.html';
 
   Future<String> findType(Uri deviceAddress) async {
+    client = new Client();
     for (var deviceType in deviceTypes) {
       var response = await client.get('$deviceAddress/$pageToCrawl');
       var content = response.body;
