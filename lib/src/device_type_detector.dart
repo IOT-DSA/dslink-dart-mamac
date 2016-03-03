@@ -8,12 +8,13 @@ class DeviceTypeDetector {
 
   Future<String> findType(Uri deviceAddress) async {
     client = new Client();
+
+    var response = await client.get('${deviceAddress.toString()}/$pageToCrawl');
+    var content = response.body;
+
     for (var deviceType in deviceTypes) {
-      var response = await client.get('$deviceAddress/$pageToCrawl');
-      var content = response.body;
 
       if (content.contains(deviceType)) {
-        client.close();
         return deviceType;
       }
     }

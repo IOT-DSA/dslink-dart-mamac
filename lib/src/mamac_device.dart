@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:dslink/dslink.dart';
 
 import 'devices.dart';
+import 'uri_parser.dart';
 import 'mamac_device_commands.dart';
+import 'device_type_detector.dart';
 
 export 'mamac_device_commands.dart';
 
@@ -12,39 +14,44 @@ class MamacDeviceNode extends SimpleNode {
   static Map<String, dynamic> definition(Map params) => {
         r'$is': isType,
         wrap(ParamConstants.refreshRate): params[ParamConstants.refreshRate],
-        wrap(ParamConstants.address): params[ParamConstants.address],
-        wrap(ParamConstants.type): params[ParamConstants.type],
+        wrap(ParamConstants.address):
+            parseAddress(params[ParamConstants.address]).toString(),
         wrap(ParamConstants.username): params[ParamConstants.username],
         wrap(ParamConstants.password): params[ParamConstants.password],
         RemoveDevice.pathName: RemoveDevice.definition()
       };
 
   static String wrap(String paramName) => ParamConstants.wrapParam(paramName);
+
   MamacDevice device;
   StreamSubscription _sub;
+  DeviceTypeDetector deviceTypeDetector;
 
-  MamacDeviceNode(String path) : super(path);
+  MamacDeviceNode(String path) : super(path) {
+    deviceTypeDetector = new DeviceTypeDetector();
+  }
 
   @override
-  void onCreated() {
-    var devType = getConfig(wrap(ParamConstants.type));
-    var address = getConfig(wrap(ParamConstants.address));
-    var refresh = getConfig(wrap(ParamConstants.refreshRate));
-    var username = getConfig(wrap(ParamConstants.username));
-    var password = getConfig(wrap(ParamConstants.password));
+  Future onCreated() async {
+    Uri deviceAdress = parseAddress(getConfig(wrap(ParamConstants.address)));
+    num refresh = getConfig(wrap(ParamConstants.refreshRate));
+    String username = getConfig(wrap(ParamConstants.username));
+    String password = getConfig(wrap(ParamConstants.password));
+
+    var deviceType = await deviceTypeDetector.findType(deviceAdress);
 
     if (refresh is double) {
       refresh = refresh.round();
     }
 
     var deviceParams = new DeviceParams()
-      ..address = address
-      ..type = devType
+      ..address = deviceAdress.toString()
+      ..type = deviceType
       ..refreshRate = refresh
       ..username = username
       ..password = password;
 
-    print('Type: $devType, Address: $address, Refresh: $refresh');
+    print('Type: $deviceType, Address: ${deviceAdress.toString()}, Refresh: $refresh');
 
     device = new MamacDevice.fromParams(deviceParams);
     _sub = device.onUpdate.listen(updateDevice);
