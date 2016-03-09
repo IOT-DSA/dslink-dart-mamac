@@ -18,7 +18,4 @@ class SM101 extends MamacDevice {
 
   // TODO: Verify for this device -- the xml and post document don't make sense
   SM101(DeviceParams deviceParams) : super(deviceParams);
-
-  funt() {
-  }
 }

@@ -101,10 +101,7 @@ class GetLogs extends SimpleNode {
     var entries = device.logPaths.map((LogEntry e) => e.displayName).join(',');
 
     var paramsNode = [
-      {
-        'name': 'logEntry',
-        'type': 'enum[${entries}]'
-      }
+      {'name': 'logEntry', 'type': 'enum[${entries}]'}
     ];
 
     configs[r'$params'] = paramsNode;

@@ -7,6 +7,5 @@ class LT201 extends MamacDevice {
   String get deviceType => type;
   String get fileName => xmlFile;
 
-  LT201(DeviceParams deviceParams)
-      : super(deviceParams);
+  LT201(DeviceParams deviceParams) : super(deviceParams);
 }

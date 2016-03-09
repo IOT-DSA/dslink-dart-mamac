@@ -7,6 +7,5 @@ class MT205 extends MamacDevice {
   String get deviceType => type;
   String get fileName => xmlFile;
 
-  MT205(DeviceParams deviceParams)
-      : super(deviceParams);
+  MT205(DeviceParams deviceParams) : super(deviceParams);
 }

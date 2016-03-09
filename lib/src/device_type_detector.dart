@@ -13,7 +13,6 @@ class DeviceTypeDetector {
     var content = response.body;
 
     for (var deviceType in deviceTypes) {
-
       if (content.contains(deviceType)) {
         return deviceType;
       }

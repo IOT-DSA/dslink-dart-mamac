@@ -70,7 +70,7 @@ class AddDevice extends SimpleNode {
 
       ret['success'] = true;
       ret['message'] = 'Success';
-    } on FormatException catch(e) {
+    } on FormatException catch (e) {
       ret['success'] = false;
       ret['message'] = e.message;
     }

@@ -5,9 +5,7 @@ class MT201 extends MamacDevice {
   static const String xmlFile = 'mt201ext.xml';
 
   @override
-  List<LogEntry> logPaths = [
-    const LogEntry('Room Temp', 'ch1.csv')
-  ];
+  List<LogEntry> logPaths = [const LogEntry('Room Temp', 'ch1.csv')];
 
   String get deviceType => type;
   String get fileName => xmlFile;
