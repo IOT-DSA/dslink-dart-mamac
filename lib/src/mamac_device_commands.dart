@@ -1,6 +1,7 @@
 import 'package:dslink/dslink.dart';
 
 import 'mamac_device.dart';
+import 'devices.dart';
 
 class RemoveDevice extends SimpleNode {
   static const String isType = 'removeDeviceNode';
@@ -70,5 +71,56 @@ class EditDevice extends SimpleNode {
     }
 
     (parent as MamacDeviceNode).update(params);
+  }
+}
+
+class GetLogs extends SimpleNode {
+  static const String isType = 'getLogsNode';
+  static const String pathName = 'Get_Logs';
+
+  static Map<String, dynamic> definition() => {
+        r'$is': isType,
+        r'$name': 'Get Logs',
+        r'$invokable': 'write',
+        r'$params': [],
+        r'$columns': [
+          {'name': 'success', 'type': 'bool', 'default': false},
+          {'name': 'message', 'type': 'string', 'default': ''}
+        ]
+      };
+
+  MamacDevice _device;
+
+  void set device(MamacDevice device) {
+    _device = device;
+
+    if (device.logPaths.isEmpty) {
+      return;
+    }
+
+    var entries = device.logPaths.map((LogEntry e) => e.displayName).join(',');
+
+    var paramsNode = [
+      {
+        'name': 'logEntry',
+        'type': 'enum[${entries}]'
+      }
+    ];
+
+    configs[r'$params'] = paramsNode;
+  }
+
+  GetLogs(String path) : super(path) {
+    configs[r"$columns"] = [
+      {"name": "KWH", "type": "number"},
+      {"name": "timestamp", "type": "string"}
+    ];
+  }
+
+  @override
+  onInvoke(Map<String, dynamic> params) async {
+    return [
+      ["Something", "Else", 5.0]
+    ];
   }
 }

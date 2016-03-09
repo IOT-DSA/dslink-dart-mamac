@@ -12,6 +12,7 @@ Future main(List<String> args) async {
         AddDevice.isType: (String path) => new AddDevice(path, link),
         MamacDeviceNode.isType: (String path) => new MamacDeviceNode(path),
         RemoveDevice.isType: (String path) => new RemoveDevice(path, link),
+        GetLogs.isType: (String path) => new GetLogs(path),
         DeviceValue.isType: (String path) => new DeviceValue(path)
       },
       autoInitialize: false);

@@ -50,6 +50,7 @@ abstract class MamacDevice {
   String get deviceType;
   String get fileName;
   Stream<Map<String, dynamic>> get onUpdate => _controller.stream;
+  List<LogEntry> logPaths = [];
 
   Uri rootUri;
   bool pendingUpdate = false;
@@ -240,4 +241,11 @@ class DeviceParams {
   String username;
   String password;
   String name;
+}
+
+class LogEntry {
+  final String csvPath;
+  final String displayName;
+
+  const LogEntry(this.displayName, this.csvPath);
 }

@@ -53,6 +53,7 @@ class AddDevice extends SimpleNode {
       ret['message'] = 'Device name is required';
       return ret;
     }
+
     if (isEmpty(params['address'])) {
       ret['message'] = 'Device address is required';
       return ret;
@@ -60,11 +61,20 @@ class AddDevice extends SimpleNode {
 
     var name = NodeNamer.createName(params['name']);
 
-    provider.addNode('/$name', MamacDeviceNode.definition(params));
-    _link.save();
+    try {
+      var definition = MamacDeviceNode.definition(params);
 
-    ret['success'] = true;
-    ret['message'] = 'Success';
+      provider.addNode('/$name', definition);
+
+      _link.save();
+
+      ret['success'] = true;
+      ret['message'] = 'Success';
+    } on FormatException catch(e) {
+      ret['success'] = false;
+      ret['message'] = e.message;
+    }
+
     return ret;
   }
 }

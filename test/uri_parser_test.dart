@@ -37,4 +37,10 @@ main() {
 
     expect(result.toString(), 'http://127.0.0.1');
   });
+
+  test('empty string should throw', () {
+    var action = () => parseAddress('');
+
+    expect(action, throwsException);
+  });
 }

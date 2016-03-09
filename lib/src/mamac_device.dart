@@ -18,7 +18,8 @@ class MamacDeviceNode extends SimpleNode {
             parseAddress(params[ParamConstants.address]).toString(),
         wrap(ParamConstants.username): params[ParamConstants.username],
         wrap(ParamConstants.password): params[ParamConstants.password],
-        RemoveDevice.pathName: RemoveDevice.definition()
+        RemoveDevice.pathName: RemoveDevice.definition(),
+        GetLogs.pathName: GetLogs.definition()
       };
 
   static String wrap(String paramName) => ParamConstants.wrapParam(paramName);
@@ -51,9 +52,14 @@ class MamacDeviceNode extends SimpleNode {
       ..username = username
       ..password = password;
 
-    print('Type: $deviceType, Address: ${deviceAdress.toString()}, Refresh: $refresh');
+    print(
+        'Type: $deviceType, Address: ${deviceAdress.toString()}, Refresh: $refresh');
 
     device = new MamacDevice.fromParams(deviceParams);
+
+    var getLogsNode = children[GetLogs.pathName] as GetLogs;
+    getLogsNode.device = device;
+
     _sub = device.onUpdate.listen(updateDevice);
   }
 
