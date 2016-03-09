@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 
 import 'node_parser.dart';
 import 'mamac_device.dart';
+import 'uri_parser.dart';
 
 import 'devices/mt201.dart';
 import 'devices/mt101.dart';
@@ -72,7 +73,7 @@ abstract class MamacDevice {
     };
 
     _client = new http.IOClient(innerClient);
-    rootUri = Uri.parse(deviceParams.address);
+    rootUri = parseAddress(deviceParams.address);
     _controller = new StreamController<Map<String, dynamic>>();
     new Timer.periodic(new Duration(seconds: deviceParams.refreshRate), update);
     update(null);

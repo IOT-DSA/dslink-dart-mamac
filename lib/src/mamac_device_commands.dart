@@ -1,9 +1,13 @@
 import 'package:dslink/dslink.dart';
+import 'package:quiver/strings.dart';
+
+import '../services.dart';
 
 import 'mamac_device.dart';
 import 'devices.dart';
+import 'dart:async';
 
-class RemoveDevice extends SimpleNode {
+class RemoveDeviceNode extends SimpleNode {
   static const String isType = 'removeDeviceNode';
   static const String pathName = 'Remove_Device';
   static Map<String, dynamic> definition() => {
@@ -19,7 +23,7 @@ class RemoveDevice extends SimpleNode {
 
   final LinkProvider _link;
 
-  RemoveDevice(String path, this._link) : super(path);
+  RemoveDeviceNode(String path, this._link) : super(path);
 
   @override
   Map<String, dynamic> onInvoke(Map<String, dynamic> params) {
@@ -32,7 +36,7 @@ class RemoveDevice extends SimpleNode {
   }
 }
 
-class EditDevice extends SimpleNode {
+class EditDeviceNode extends SimpleNode {
   static const String isType = 'editDeviceNode';
   static const String pathName = 'Edit_Device';
   static Map<String, dynamic> definition(Map params) => {
@@ -59,7 +63,7 @@ class EditDevice extends SimpleNode {
         ]
       };
 
-  EditDevice(String path) : super(path);
+  EditDeviceNode(String path) : super(path);
 
   @override
   Map<String, dynamic> onInvoke(Map<String, dynamic> params) {
@@ -74,7 +78,7 @@ class EditDevice extends SimpleNode {
   }
 }
 
-class GetLogs extends SimpleNode {
+class GetLogsNode extends SimpleNode {
   static const String isType = 'getLogsNode';
   static const String pathName = 'Get_Logs';
 
@@ -90,6 +94,8 @@ class GetLogs extends SimpleNode {
       };
 
   MamacDevice _device;
+  GetLogsService _getLogsService = new GetLogsService();
+  LinkProvider _link;
 
   void set device(MamacDevice device) {
     _device = device;
@@ -107,7 +113,7 @@ class GetLogs extends SimpleNode {
     configs[r'$params'] = paramsNode;
   }
 
-  GetLogs(String path) : super(path) {
+  GetLogsNode(String path, this._link) : super(path) {
     configs[r"$columns"] = [
       {"name": "KWH", "type": "number"},
       {"name": "timestamp", "type": "string"}
@@ -115,9 +121,33 @@ class GetLogs extends SimpleNode {
   }
 
   @override
-  onInvoke(Map<String, dynamic> params) async {
-    return [
-      ["Something", "Else", 5.0]
-    ];
+  Future<Map<String, dynamic>> onInvoke(Map<String, dynamic> params) async {
+    var ret = {'success': false, 'message': ''};
+
+    var logEntryDisplayName = (params['logEntry']) as String;
+
+    if (isEmpty(logEntryDisplayName)) {
+      ret['message'] = 'Invalid logEntry';
+      return ret;
+    }
+
+    var logEntry = _device.logPaths
+        .firstWhere((LogEntry e) => e.displayName == logEntryDisplayName);
+
+    try {
+      var logs = await _getLogsService.fetchCsvLogs(_device, logEntry);
+
+      var definition = DeviceValue.definition(logs);
+      definition[r'$writable'] = 'never';
+
+      var displayNameToPath = logEntryDisplayName.replaceAll(' ', '_');
+      _link.addNode('${parent.path}/Logs_$displayNameToPath', definition);
+
+      ret['success'] = true;
+      return ret;
+    } on Exception {
+      ret['message'] = 'An error occurred when fetching the logs';
+      return ret;
+    }
   }
 }

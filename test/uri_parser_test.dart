@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:dslink_mamac/src/uri_parser.dart';
+import 'package:dslink_mamac/services.dart';
 
 main() {
   test('ipv4 address should be parsed', () {
