@@ -83,11 +83,16 @@ class GetHistoryNode extends SimpleNode {
   static const String pathName = 'Get_History';
   static const String childNodePrefix = 'History_';
 
-  static Map<String, dynamic> definition() => {
+  static Map<String, dynamic> definition(Map params) => {
         r'$is': isType,
         r'$name': 'Get History',
         r'$invokable': 'write',
         r'$params': [],
+        wrap(ParamConstants.refreshRate): params[ParamConstants.refreshRate],
+        wrap(ParamConstants.address):
+            parseAddress(params[ParamConstants.address]).toString(),
+        wrap(ParamConstants.username): params[ParamConstants.username],
+        wrap(ParamConstants.password): params[ParamConstants.password],
         r'$columns': [
           {'name': 'success', 'type': 'bool', 'default': false},
           {'name': 'message', 'type': 'string', 'default': ''}
@@ -98,14 +103,15 @@ class GetHistoryNode extends SimpleNode {
   GetLogsService _getLogsService = new GetLogsService();
   LinkProvider _link;
 
-  void set device(MamacDevice device) {
-    _device = device;
+  @override
+  Future<Null> onCreated() async {
+    _device = await createDevice(configs);
 
-    if (device.logPaths.isEmpty) {
+    if (_device.logPaths.isEmpty) {
       return;
     }
 
-    var entries = device.logPaths.map((LogEntry e) => e.displayName).join(',');
+    var entries = _device.logPaths.map((LogEntry e) => e.displayName).join(',');
 
     var paramsNode = [
       {'name': 'logEntry', 'type': 'enum[${entries}]'}

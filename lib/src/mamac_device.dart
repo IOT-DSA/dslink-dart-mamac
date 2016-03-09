@@ -9,6 +9,8 @@ import 'device_type_detector.dart';
 
 export 'mamac_device_commands.dart';
 
+DeviceTypeDetector deviceTypeDetector = new DeviceTypeDetector();
+
 class MamacDeviceNode extends SimpleNode {
   static const String isType = 'mamacDeviceNode';
   static Map<String, dynamic> definition(Map params) => {
@@ -19,43 +21,18 @@ class MamacDeviceNode extends SimpleNode {
         wrap(ParamConstants.username): params[ParamConstants.username],
         wrap(ParamConstants.password): params[ParamConstants.password],
         RemoveDeviceNode.pathName: RemoveDeviceNode.definition(),
-        GetHistoryNode.pathName: GetHistoryNode.definition()
+        GetHistoryNode.pathName: GetHistoryNode.definition(params)
       };
-
-  static String wrap(String paramName) => ParamConstants.wrapParam(paramName);
 
   MamacDevice device;
   StreamSubscription _sub;
   DeviceTypeDetector deviceTypeDetector;
 
-  MamacDeviceNode(String path) : super(path) {
-    deviceTypeDetector = new DeviceTypeDetector();
-  }
+  MamacDeviceNode(String path) : super(path);
 
   @override
-  Future onCreated() async {
-    Uri deviceAdress = parseAddress(getConfig(wrap(ParamConstants.address)));
-    num refresh = getConfig(wrap(ParamConstants.refreshRate));
-    String username = getConfig(wrap(ParamConstants.username));
-    String password = getConfig(wrap(ParamConstants.password));
-
-    var deviceType = await deviceTypeDetector.findType(deviceAdress);
-
-    if (refresh is double) {
-      refresh = refresh.round();
-    }
-
-    var deviceParams = new DeviceParams()
-      ..address = deviceAdress.toString()
-      ..type = deviceType
-      ..refreshRate = refresh
-      ..username = username
-      ..password = password;
-
-    device = new MamacDevice.fromParams(deviceParams);
-
-    var getLogsNode = children[GetHistoryNode.pathName] as GetHistoryNode;
-    getLogsNode.device = device;
+  Future<Null> onCreated() async {
+    device = await createDevice(configs);
 
     _sub = device.onUpdate.listen(updateDevice);
   }
@@ -111,11 +88,8 @@ class MamacDeviceNode extends SimpleNode {
 
 class DeviceValue extends SimpleNode {
   static const String isType = 'deviceValue';
-  static Map<String, dynamic> definition(value) => {
-        r'$is': isType,
-        r'$type': 'string',
-        r'?value': value
-      };
+  static Map<String, dynamic> definition(value) =>
+      {r'$is': isType, r'$type': 'string', r'?value': value};
 
   MamacDevice _device;
 
@@ -137,3 +111,27 @@ class DeviceValue extends SimpleNode {
   @override
   bool onSetValue(dynamic newValue) => _device?.onSetValue(this, newValue);
 }
+
+Future<MamacDevice> createDevice(Map config) async {
+  Uri deviceAdress = parseAddress(config[wrap(ParamConstants.address)]);
+  num refresh = config[wrap(ParamConstants.refreshRate)];
+  String username = config[wrap(ParamConstants.username)];
+  String password = config[wrap(ParamConstants.password)];
+
+  var deviceType = await deviceTypeDetector.findType(deviceAdress);
+
+  if (refresh is double) {
+    refresh = refresh.round();
+  }
+
+  var deviceParams = new DeviceParams()
+    ..address = deviceAdress.toString()
+    ..type = deviceType
+    ..refreshRate = refresh
+    ..username = username
+    ..password = password;
+
+  return new MamacDevice.fromParams(deviceParams);
+}
+
+String wrap(String paramName) => ParamConstants.wrapParam(paramName);
