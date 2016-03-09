@@ -361,7 +361,7 @@ abstract class NodeParser {
           ret['@cmdid'] = '${_idPrefix}11_YY';
           break;
         default:
-          ret[r'$writable'] = 'never';
+          ret.remove(r'$writable');
       }
     }
 

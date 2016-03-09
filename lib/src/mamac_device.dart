@@ -114,7 +114,6 @@ class DeviceValue extends SimpleNode {
   static Map<String, dynamic> definition(value) => {
         r'$is': isType,
         r'$type': 'string',
-        r'$writable': 'never',
         r'?value': value
       };
 
