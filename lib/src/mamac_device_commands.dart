@@ -81,6 +81,7 @@ class EditDeviceNode extends SimpleNode {
 class GetLogsNode extends SimpleNode {
   static const String isType = 'getLogsNode';
   static const String pathName = 'Get_Logs';
+  static const String childNodePrefix = 'Logs_';
 
   static Map<String, dynamic> definition() => {
         r'$is': isType,
@@ -141,7 +142,7 @@ class GetLogsNode extends SimpleNode {
       definition[r'$writable'] = 'never';
 
       var displayNameToPath = logEntryDisplayName.replaceAll(' ', '_');
-      _link.addNode('${parent.path}/Logs_$displayNameToPath', definition);
+      _link.addNode('${parent.path}/$childNodePrefix$displayNameToPath', definition);
 
       ret['success'] = true;
       return ret;
