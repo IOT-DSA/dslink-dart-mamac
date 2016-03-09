@@ -114,12 +114,7 @@ class GetHistoryNode extends SimpleNode {
     configs[r'$params'] = paramsNode;
   }
 
-  GetHistoryNode(String path, this._link) : super(path) {
-    configs[r"$columns"] = [
-      {"name": "KWH", "type": "number"},
-      {"name": "timestamp", "type": "string"}
-    ];
-  }
+  GetHistoryNode(String path, this._link) : super(path);
 
   @override
   Future<Map<String, dynamic>> onInvoke(Map<String, dynamic> params) async {
