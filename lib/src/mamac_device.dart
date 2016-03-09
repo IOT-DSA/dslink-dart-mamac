@@ -52,9 +52,6 @@ class MamacDeviceNode extends SimpleNode {
       ..username = username
       ..password = password;
 
-    print(
-        'Type: $deviceType, Address: ${deviceAdress.toString()}, Refresh: $refresh');
-
     device = new MamacDevice.fromParams(deviceParams);
 
     var getLogsNode = children[GetHistoryNode.pathName] as GetHistoryNode;
@@ -117,7 +114,7 @@ class DeviceValue extends SimpleNode {
   static Map<String, dynamic> definition(value) => {
         r'$is': isType,
         r'$type': 'string',
-        r'$writable': 'write',
+        r'$writable': 'never',
         r'?value': value
       };
 

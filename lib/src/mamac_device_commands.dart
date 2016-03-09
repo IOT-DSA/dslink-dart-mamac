@@ -134,7 +134,6 @@ class GetHistoryNode extends SimpleNode {
       var logs = await _getLogsService.fetchCsvLogs(_device, logEntry);
 
       var definition = DeviceValue.definition(logs);
-      definition[r'$writable'] = 'never';
 
       var displayNameToPath = logEntryDisplayName.replaceAll(' ', '_');
       _link.addNode(
