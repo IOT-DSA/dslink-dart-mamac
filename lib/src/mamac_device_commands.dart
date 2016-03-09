@@ -142,7 +142,8 @@ class GetLogsNode extends SimpleNode {
       definition[r'$writable'] = 'never';
 
       var displayNameToPath = logEntryDisplayName.replaceAll(' ', '_');
-      _link.addNode('${parent.path}/$childNodePrefix$displayNameToPath', definition);
+      _link.addNode(
+          '${parent.path}/$childNodePrefix$displayNameToPath', definition);
 
       ret['success'] = true;
       return ret;

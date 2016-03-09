@@ -18,7 +18,6 @@ class MamacDeviceNode extends SimpleNode {
             parseAddress(params[ParamConstants.address]).toString(),
         wrap(ParamConstants.username): params[ParamConstants.username],
         wrap(ParamConstants.password): params[ParamConstants.password],
-
         RemoveDeviceNode.pathName: RemoveDeviceNode.definition(),
         GetLogsNode.pathName: GetLogsNode.definition()
       };
