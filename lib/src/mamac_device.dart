@@ -19,7 +19,7 @@ class MamacDeviceNode extends SimpleNode {
         wrap(ParamConstants.username): params[ParamConstants.username],
         wrap(ParamConstants.password): params[ParamConstants.password],
         RemoveDeviceNode.pathName: RemoveDeviceNode.definition(),
-        GetLogsNode.pathName: GetLogsNode.definition()
+        GetHistoryNode.pathName: GetHistoryNode.definition()
       };
 
   static String wrap(String paramName) => ParamConstants.wrapParam(paramName);
@@ -57,7 +57,7 @@ class MamacDeviceNode extends SimpleNode {
 
     device = new MamacDevice.fromParams(deviceParams);
 
-    var getLogsNode = children[GetLogsNode.pathName] as GetLogsNode;
+    var getLogsNode = children[GetHistoryNode.pathName] as GetHistoryNode;
     getLogsNode.device = device;
 
     _sub = device.onUpdate.listen(updateDevice);

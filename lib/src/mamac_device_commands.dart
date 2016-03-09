@@ -78,14 +78,14 @@ class EditDeviceNode extends SimpleNode {
   }
 }
 
-class GetLogsNode extends SimpleNode {
-  static const String isType = 'getLogsNode';
-  static const String pathName = 'Get_Logs';
-  static const String childNodePrefix = 'Logs_';
+class GetHistoryNode extends SimpleNode {
+  static const String isType = 'getHistoryNode';
+  static const String pathName = 'Get_History';
+  static const String childNodePrefix = 'History_';
 
   static Map<String, dynamic> definition() => {
         r'$is': isType,
-        r'$name': 'Get Logs',
+        r'$name': 'Get History',
         r'$invokable': 'write',
         r'$params': [],
         r'$columns': [
@@ -114,7 +114,7 @@ class GetLogsNode extends SimpleNode {
     configs[r'$params'] = paramsNode;
   }
 
-  GetLogsNode(String path, this._link) : super(path) {
+  GetHistoryNode(String path, this._link) : super(path) {
     configs[r"$columns"] = [
       {"name": "KWH", "type": "number"},
       {"name": "timestamp", "type": "string"}
