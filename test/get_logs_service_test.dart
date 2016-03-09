@@ -12,11 +12,11 @@ main() {
 
   var device = new MamacDevice.fromParams(params);
 
-  test('should return a list of strings', () async {
-    var logEntry = device.logPaths[0];
+  test('should return a csv string', () async {
+    var randomLogEntry = device.logPaths[0];
 
-    var result = await sut.fetchCsvLogs(device, logEntry);
+    var result = await sut.fetchCsvLogs(device, randomLogEntry);
 
-    expect(result, isList);
+    expect(result, (r) => r is String);
   });
 }
