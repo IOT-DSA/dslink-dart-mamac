@@ -7,6 +7,5 @@ class FZ101 extends MamacDevice {
   String get deviceType => type;
   String get fileName => xmlFile;
 
-  FZ101(DeviceParams deviceParams)
-      : super(deviceParams);
+  FZ101(DeviceParams deviceParams) : super(deviceParams);
 }

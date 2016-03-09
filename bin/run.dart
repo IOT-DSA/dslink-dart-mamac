@@ -11,8 +11,9 @@ Future main(List<String> args) async {
       profiles: {
         AddDevice.isType: (String path) => new AddDevice(path, link),
         MamacDeviceNode.isType: (String path) => new MamacDeviceNode(path),
-        RemoveDevice.isType: (String path) => new RemoveDevice(path, link),
-        DeviceValue.isType: (String path) => new DeviceValue(path)
+        RemoveDeviceNode.isType: (String path) => new RemoveDeviceNode(path, link),
+        GetHistoryNode.isType: (String path) => new GetHistoryNode(path, link),
+        DeviceValue.isType: (String path) => new DeviceValue(path),
       },
       autoInitialize: false);
 

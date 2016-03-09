@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:dslink_mamac/src/uri_parser.dart';
+import 'package:dslink_mamac/services.dart';
 
 main() {
   test('ipv4 address should be parsed', () {
@@ -36,5 +36,11 @@ main() {
     var result = parseAddress('http://127.0.0.1/');
 
     expect(result.toString(), 'http://127.0.0.1');
+  });
+
+  test('empty string should throw', () {
+    var action = () => parseAddress('');
+
+    expect(action, throwsException);
   });
 }

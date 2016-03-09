@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 
 import 'node_parser.dart';
 import 'mamac_device.dart';
+import 'uri_parser.dart';
 
 import 'devices/mt201.dart';
 import 'devices/mt101.dart';
@@ -50,6 +51,7 @@ abstract class MamacDevice {
   String get deviceType;
   String get fileName;
   Stream<Map<String, dynamic>> get onUpdate => _controller.stream;
+  List<LogEntry> logPaths = [];
 
   Uri rootUri;
   bool pendingUpdate = false;
@@ -71,7 +73,7 @@ abstract class MamacDevice {
     };
 
     _client = new http.IOClient(innerClient);
-    rootUri = Uri.parse(deviceParams.address);
+    rootUri = parseAddress(deviceParams.address);
     _controller = new StreamController<Map<String, dynamic>>();
     new Timer.periodic(new Duration(seconds: deviceParams.refreshRate), update);
     update(null);
@@ -240,4 +242,11 @@ class DeviceParams {
   String username;
   String password;
   String name;
+}
+
+class LogEntry {
+  final String csvPath;
+  final String displayName;
+
+  const LogEntry(this.displayName, this.csvPath);
 }

@@ -45,7 +45,6 @@ abstract class NodeParser {
     var ind = -1;
 
     if (nodeName.startsWith('RoomTemp')) {
-      ret[r'$writable'] = 'never';
       if (nodeName == 'RoomTempValue') {
         ret[r'$type'] = 'number';
         ret[r'?value'] = num.parse(value);
@@ -362,7 +361,7 @@ abstract class NodeParser {
           ret['@cmdid'] = '${_idPrefix}11_YY';
           break;
         default:
-          ret[r'$writable'] = 'never';
+          ret.remove(r'$writable');
       }
     }
 
@@ -539,7 +538,6 @@ abstract class NodeParser {
       }
     }
 
-    print(cmd);
     return ret;
   }
 

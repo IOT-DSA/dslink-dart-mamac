@@ -1,9 +1,14 @@
+import 'package:quiver/strings.dart';
+
 Uri parseAddress(String address) {
   Uri parsed;
 
   String trimTrailingSlashes(String s) {
-    if (s == '/') {
+    if (isEmpty(s)) {
       return '';
+    }
+    if (s == '/') {
+      return '/';
     } else if (s.endsWith('/')) {
       return trimTrailingSlashes(s.substring(0, s.length - 1));
     } else {
@@ -21,6 +26,10 @@ Uri parseAddress(String address) {
     }
   } on FormatException {
     parsed = Uri.parse('http://${sanitizedAddress}');
+  }
+
+  if (isEmpty(parsed.host)) {
+    throw new FormatException('Cannot parse provided address $address');
   }
 
   return parsed;
