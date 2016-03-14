@@ -88,8 +88,12 @@ class MamacDeviceNode extends SimpleNode {
 
 class DeviceValue extends SimpleNode {
   static const String isType = 'deviceValue';
-  static Map<String, dynamic> definition(value) =>
-      {r'$is': isType, r'$type': 'string', r'?value': value};
+  static Map<String, dynamic> definition(value) => {
+        r'$is': isType,
+        r'$type': 'string',
+        r'?value': value,
+        r'$writable': 'write'
+      };
 
   MamacDevice _device;
 
@@ -98,7 +102,7 @@ class DeviceValue extends SimpleNode {
   @override
   void onCreated() {
     var p = parent;
-    while (p is! MamacDeviceNode) {
+    while (p is! MamacDeviceNode && p != null) {
       p = p.parent;
       if (p == null) break;
     }
